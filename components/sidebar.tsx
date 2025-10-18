@@ -20,8 +20,13 @@ export function Sidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center">
-            <Leaf className="w-5 h-5 text-sidebar-primary-foreground" />
+          <div className="w-8 h-8 rounded-lg overflow-hidden shadow-lg bg-white/10 backdrop-blur-sm">
+            <img 
+                src="/logo.png" 
+                alt="EvergreenLedger Logo" 
+                className="w-full h-full object-contain p-1"
+                style={{ imageRendering: 'crisp-edges' }}
+              />
           </div>
           <h1 className="text-xl font-bold text-sidebar-foreground">EvergreenLedger</h1>
         </div>

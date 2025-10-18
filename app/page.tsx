@@ -40,8 +40,13 @@ export default function LoginPage() {
         {/* Logo Section */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
-              <Leaf className="w-8 h-8 text-primary-foreground" />
+            <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg bg-white/10 backdrop-blur-sm">
+              <img 
+                src="/logo.png" 
+                alt="EvergreenLedger Logo" 
+                className="w-full h-full object-contain p-2"
+                style={{ imageRendering: 'crisp-edges' }}
+              />
             </div>
           </div>
           <h1 className="text-3xl font-bold text-green-200 mb-2">EvergreenLedger</h1>

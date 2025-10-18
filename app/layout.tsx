@@ -7,9 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'EvergreenLedger',
+  description: 'Tea Leaf Supplier Management System'
 }
 
 export default function RootLayout({
@@ -19,6 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" crxlauncher="">
+      <head>
+        <link rel="icon" type="image/x-icon" href="/logo.png" />
+      </head>
       <body className={`font-sans antialiased`}>
         {children}
         <Analytics />
