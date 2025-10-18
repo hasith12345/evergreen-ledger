@@ -1,0 +1,346 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import { LayoutWrapper } from "@/components/layout-wrapper"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Plus, Edit2, Eye, X } from "lucide-react"
+
+const initialSuppliers = [
+  {
+    id: 1,
+    name: "Green Valley Farms",
+    contact: "9876543210",
+    address: "123 Tea Lane, Darjeeling",
+    bank: "HDFC Bank",
+    totalCollected: "2500 kg",
+    totalPaid: "₹1,25,000",
+  },
+  {
+    id: 2,
+    name: "Mountain Tea Co",
+    contact: "9876543211",
+    address: "456 Hill Road, Assam",
+    bank: "ICICI Bank",
+    totalCollected: "1800 kg",
+    totalPaid: "₹90,000",
+  },
+  {
+    id: 3,
+    name: "Sunrise Estates",
+    contact: "9876543212",
+    address: "789 Sunrise Ave, Nilgiri",
+    bank: "SBI",
+    totalCollected: "3200 kg",
+    totalPaid: "₹1,60,000",
+  },
+]
+
+export default function SuppliersPage() {
+  const [suppliersList, setSuppliersList] = useState(initialSuppliers)
+  const [showForm, setShowForm] = useState(false)
+  const [selectedSupplier, setSelectedSupplier] = useState<(typeof initialSuppliers)[0] | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [formData, setFormData] = useState({
+    name: "",
+    contact: "",
+    address: "",
+    bank: "",
+  })
+
+  const handleAddSupplier = (e: React.FormEvent) => {
+    e.preventDefault()
+    const newSupplier = {
+      id: Math.max(...suppliersList.map((s) => s.id), 0) + 1,
+      ...formData,
+      totalCollected: "0 kg",
+      totalPaid: "₹0",
+    }
+    setSuppliersList([...suppliersList, newSupplier])
+    setFormData({ name: "", contact: "", address: "", bank: "" })
+    setShowForm(false)
+  }
+
+  const handleEditSupplier = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedSupplier) return
+    setSuppliersList(suppliersList.map((s) => (s.id === selectedSupplier.id ? { ...s, ...formData } : s)))
+    setFormData({ name: "", contact: "", address: "", bank: "" })
+    setSelectedSupplier(null)
+    setIsEditing(false)
+  }
+
+  const openViewModal = (supplier: (typeof initialSuppliers)[0]) => {
+    setSelectedSupplier(supplier)
+    setIsEditing(false)
+  }
+
+  const openEditModal = (supplier: (typeof initialSuppliers)[0]) => {
+    setSelectedSupplier(supplier)
+    setFormData({
+      name: supplier.name,
+      contact: supplier.contact,
+      address: supplier.address,
+      bank: supplier.bank,
+    })
+    setIsEditing(true)
+  }
+
+  const closeModal = () => {
+    setSelectedSupplier(null)
+    setIsEditing(false)
+    setFormData({ name: "", contact: "", address: "", bank: "" })
+  }
+
+  return (
+    <LayoutWrapper>
+      <div className="p-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Suppliers</h1>
+            <p className="text-muted-foreground">Manage your tea leaf suppliers</p>
+          </div>
+          <Button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add Supplier
+          </Button>
+        </div>
+
+        {/* Registration Form */}
+        {showForm && (
+          <Card className="p-6 border border-border bg-card mb-8">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Register New Supplier</h2>
+            <form onSubmit={handleAddSupplier} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Name</label>
+                  <Input
+                    type="text"
+                    placeholder="Supplier name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Contact Number</label>
+                  <Input
+                    type="tel"
+                    placeholder="Phone number"
+                    value={formData.contact}
+                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Address</label>
+                  <Input
+                    type="text"
+                    placeholder="Full address"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Bank Info</label>
+                  <Input
+                    type="text"
+                    placeholder="Bank name"
+                    value={formData.bank}
+                    onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                  Register Supplier
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="bg-muted hover:bg-muted/80 text-foreground"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </Card>
+        )}
+
+        {/* Suppliers List */}
+        <div className="space-y-4">
+          {suppliersList.map((supplier) => (
+            <Card key={supplier.id} className="p-6 border border-border bg-card hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">{supplier.name}</h3>
+                  <p className="text-sm text-muted-foreground">{supplier.address}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-2 bg-transparent"
+                    onClick={() => openViewModal(supplier)}
+                  >
+                    <Eye className="w-4 h-4" />
+                    View
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-2 bg-transparent"
+                    onClick={() => openEditModal(supplier)}
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Contact</p>
+                  <p className="font-semibold text-foreground">{supplier.contact}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Bank</p>
+                  <p className="font-semibold text-foreground">{supplier.bank}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Total Collected</p>
+                  <p className="font-semibold text-primary">{supplier.totalCollected}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Total Paid</p>
+                  <p className="font-semibold text-foreground">{supplier.totalPaid}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {selectedSupplier && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-2xl border border-border bg-card">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {isEditing ? "Edit Supplier" : "Supplier Details"}
+                  </h2>
+                  <button
+                    onClick={closeModal}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                {isEditing ? (
+                  <form onSubmit={handleEditSupplier} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">Name</label>
+                        <Input
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">Contact Number</label>
+                        <Input
+                          type="tel"
+                          value={formData.contact}
+                          onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">Address</label>
+                        <Input
+                          type="text"
+                          value={formData.address}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">Bank Info</label>
+                        <Input
+                          type="text"
+                          value={formData.bank}
+                          onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3 pt-4">
+                      <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                        Save Changes
+                      </Button>
+                      <Button type="button" onClick={closeModal} className="bg-muted hover:bg-muted/80 text-foreground">
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Name</p>
+                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Contact Number</p>
+                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.contact}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Address</p>
+                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.address}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Bank Info</p>
+                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.bank}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Total Collected</p>
+                        <p className="text-lg font-semibold text-primary">{selectedSupplier.totalCollected}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Total Paid</p>
+                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.totalPaid}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 pt-4">
+                      <Button
+                        onClick={() => openEditModal(selectedSupplier)}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                        Edit Supplier
+                      </Button>
+                      <Button onClick={closeModal} className="bg-muted hover:bg-muted/80 text-foreground">
+                        Close
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
+        )}
+      </div>
+    </LayoutWrapper>
+  )
+}
