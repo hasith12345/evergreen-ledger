@@ -24,8 +24,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 relative"
+      style={{
+        backgroundImage: "url('/background.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Background overlay */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Logo Section */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -33,12 +44,12 @@ export default function LoginPage() {
               <Leaf className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">EvergreenLedger</h1>
-          <p className="text-muted-foreground">Tea Leaf Supplier Management System</p>
+          <h1 className="text-3xl font-bold text-green-200 mb-2">EvergreenLedger</h1>
+          <p className="text-muted-foreground text-white">Tea Leaf Supplier Management System</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-card rounded-xl shadow-lg p-8 border border-border">
+        <div className="bg-card/95 backdrop-blur-md rounded-xl shadow-lg p-8 border border-border/50">
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-foreground mb-2">
