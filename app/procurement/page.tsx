@@ -120,7 +120,7 @@ export default function ProcurementPage() {
           </Card>
           <Card className="p-6 border border-border bg-card">
             <p className="text-xs font-semibold text-muted-foreground mb-2">PENDING PAYMENTS</p>
-            <p className="text-3xl font-bold text-foreground mb-1">LKR 55,200</p>
+            <p className="text-3xl font-bold text-foreground mb-1">Rs. 55,200</p>
             <p className="text-xs text-muted-foreground">3 suppliers</p>
           </Card>
         </div>

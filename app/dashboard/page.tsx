@@ -26,10 +26,11 @@ const dashboardData = [
 ]
 
 const recentActivities = [
-  { id: 1, supplier: "Green Valley Farms", weight: "250 kg", grade: "A", date: "2025-01-15" },
-  { id: 2, supplier: "Mountain Tea Co", weight: "180 kg", grade: "B", date: "2025-01-14" },
-  { id: 3, supplier: "Sunrise Estates", weight: "320 kg", grade: "A", date: "2025-01-13" },
-  { id: 4, supplier: "Valley Harvest", weight: "150 kg", grade: "C", date: "2025-01-12" },
+  { id: 1, supplier: "Sanath Nishantha", weight: "500 kg", grade: "A", date: "2025-01-15" },
+  { id: 2, supplier: "Hashan Hewage", weight: "490 kg", grade: "B", date: "2025-01-14" },
+  { id: 3, supplier: "Arul Suresh", weight: "780 kg", grade: "A", date: "2025-01-13" },
+  { id: 4, supplier: "Sumana Nishanthi", weight: "1100 kg", grade: "A", date: "2025-01-12" },
+  { id: 5, supplier: "Kusumlatha", weight: "562 kg", grade: "B", date: "2025-01-11" },
 ]
 
 export default function DashboardPage() {
@@ -76,7 +77,7 @@ export default function DashboardPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Pending Payments</p>
-                <p className="text-3xl font-bold text-foreground">₹2,45,000</p>
+                <p className="text-3xl font-bold text-foreground">Rs. 2,45,000</p>
                 <p className="text-xs text-destructive mt-2">12 suppliers awaiting</p>
               </div>
               <div className="w-12 h-12 bg-destructive/10 rounded-lg flex items-center justify-center">

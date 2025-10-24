@@ -76,7 +76,7 @@ export default function SettingsPage() {
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-foreground mb-2">Grade {item.grade}</label>
                   <div className="flex items-center gap-2">
-                    <span className="text-foreground">₹</span>
+                    <span className="text-foreground">Rs.</span>
                     <Input
                       type="number"
                       value={item.rate}

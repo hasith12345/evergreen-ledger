@@ -9,47 +9,58 @@ import { MessageSquare, CheckCircle, Clock } from "lucide-react"
 const paymentRecords = [
   {
     id: 1,
-    supplier: "Green Valley Farms",
-    amount: 125000,
-    weight: 250,
+    supplier: "Sanath Nishantha",
+    amount: 100000,
+    weight: 200,
     grade: "A",
     rate: 500,
     status: "Paid",
     date: "2025-01-15",
-    phone: "9876543210",
+    phone: "0714442389",
   },
   {
     id: 2,
-    supplier: "Mountain Tea Co",
-    amount: 63000,
-    weight: 180,
+    supplier: "Hashan Hewage",
+    amount: 95000,
+    weight: 271,
     grade: "B",
     rate: 350,
     status: "Pending",
     date: "2025-01-14",
-    phone: "9876543211",
+    phone: "0718890365",
   },
   {
     id: 3,
-    supplier: "Sunrise Estates",
+    supplier: "Arul Suresh",
     amount: 160000,
     weight: 320,
     grade: "A",
     rate: 500,
     status: "Pending",
     date: "2025-01-13",
-    phone: "9876543212",
+    phone: "0766742389",
   },
   {
     id: 4,
-    supplier: "Valley Harvest",
-    amount: 30000,
-    weight: 150,
-    grade: "C",
-    rate: 200,
+    supplier: "Sumana Nishanthi",
+    amount: 235400,
+    weight: 470,
+    grade: "A",
+    rate: 500,
     status: "Paid",
     date: "2025-01-12",
-    phone: "9876543213",
+    phone: "0723349512",
+  },
+  {
+    id: 5,
+    supplier: "Kusumlatha",
+    amount: 102580,
+    weight: 293,
+    grade: "B",
+    rate: 350,
+    status: "Pending",
+    date: "2025-01-11",
+    phone: "0756088993",
   },
 ]
 
@@ -62,7 +73,7 @@ export default function PayrollPage() {
   }
 
   const handleSendSMS = (phone: string, amount: number) => {
-    alert(`SMS sent to ${phone}: "Payment of ₹${amount.toLocaleString()} has been processed. Thank you!"`)
+    alert(`SMS sent to ${phone}: "Payment of Rs.${amount.toLocaleString()} has been processed. Thank you!"`)
   }
 
   const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0)
@@ -82,19 +93,19 @@ export default function PayrollPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6 border border-border bg-card">
             <p className="text-sm text-muted-foreground mb-1">Total Amount</p>
-            <p className="text-3xl font-bold text-foreground">₹{totalAmount.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-foreground">Rs. {totalAmount.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-2">{payments.length} payments</p>
           </Card>
           <Card className="p-6 border border-border bg-card">
             <p className="text-sm text-muted-foreground mb-1">Paid</p>
-            <p className="text-3xl font-bold text-primary">₹{paidAmount.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-primary">Rs. {paidAmount.toLocaleString()}</p>
             <p className="text-xs text-primary mt-2 flex items-center gap-1">
               <CheckCircle className="w-3 h-3" /> {payments.filter((p) => p.status === "Paid").length} completed
             </p>
           </Card>
           <Card className="p-6 border border-border bg-card">
             <p className="text-sm text-muted-foreground mb-1">Pending</p>
-            <p className="text-3xl font-bold text-destructive">₹{pendingAmount.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-destructive">Rs. {pendingAmount.toLocaleString()}</p>
             <p className="text-xs text-destructive mt-2 flex items-center gap-1">
               <Clock className="w-3 h-3" /> {payments.filter((p) => p.status === "Pending").length} awaiting
             </p>
@@ -107,19 +118,19 @@ export default function PayrollPage() {
           <div className="bg-secondary/5 border border-secondary/20 rounded-lg p-4 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-foreground">Formula:</span>
-              <span className="font-mono text-sm text-muted-foreground">Payment = Weight (kg) × Grade Rate (₹/kg)</span>
+              <span className="font-mono text-sm text-muted-foreground">Payment = Weight (kg) × Grade Rate (Rs/kg)</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-foreground">Grade A Rate:</span>
-              <span className="font-semibold text-primary">₹500/kg</span>
+              <span className="font-semibold text-primary">Rs. 500/kg</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-foreground">Grade B Rate:</span>
-              <span className="font-semibold text-secondary">₹350/kg</span>
+              <span className="font-semibold text-secondary">Rs. 350/kg</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-foreground">Grade C Rate:</span>
-              <span className="font-semibold text-muted-foreground">₹200/kg</span>
+              <span className="font-semibold text-muted-foreground">Rs. 200/kg</span>
             </div>
           </div>
         </Card>
@@ -157,7 +168,7 @@ export default function PayrollPage() {
                         Grade {payment.grade}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-foreground">₹{payment.amount.toLocaleString()}</td>
+                    <td className="py-3 px-4 font-semibold text-foreground">Rs. {payment.amount.toLocaleString()}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${

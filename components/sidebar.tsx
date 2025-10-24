@@ -58,7 +58,7 @@ export function Sidebar() {
       <div className="p-4 border-t border-sidebar-border">
         <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">
           <LogOut className="w-5 h-5" />
-          <span className="font-medium">Logout</span>
+          <a href="/" className="font-medium">Logout</a>
         </button>
       </div>
     </aside>
