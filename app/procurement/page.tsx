@@ -1,226 +1,316 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Download, Plus } from "lucide-react"
+import { Search, ChevronLeft, ChevronRight } from "lucide-react"
 
-const gradeRates = {
-  A: 500,
-  B: 350,
-  C: 200,
-}
-
-const procurementRecords = [
+const recentCollections = [
   {
     id: 1,
-    supplier: "Green Valley Farms",
-    weight: 250,
-    grade: "A",
-    date: "2025-01-15",
-    value: 125000,
+    time: "09:45 AM",
+    supplier: "K. Perera",
+    grossWeight: 125.5,
+    waterContent: 12.5,
+    netWeight: 110.4,
+    grade: "Grade A",
+    status: "Completed",
   },
   {
     id: 2,
-    supplier: "Mountain Tea Co",
-    weight: 180,
-    grade: "B",
-    date: "2025-01-14",
-    value: 63000,
+    time: "08:30 AM",
+    supplier: "S. Ahmed",
+    grossWeight: 98.2,
+    waterContent: 14.2,
+    netWeight: 84.3,
+    grade: "Grade B",
+    status: "Completed",
   },
   {
     id: 3,
-    supplier: "Sunrise Estates",
-    weight: 320,
-    grade: "A",
-    date: "2025-01-13",
-    value: 160000,
+    time: "07:15 AM",
+    supplier: "R. Silva",
+    grossWeight: 156.8,
+    waterContent: 11.8,
+    netWeight: 138.2,
+    grade: "Grade A",
+    status: "Completed",
   },
+  {
+    id: 4,
+    time: "06:00 AM",
+    supplier: "K. Perera",
+    grossWeight: 142.3,
+    waterContent: 13.1,
+    netWeight: 123.6,
+    grade: "Grade A",
+    status: "Completed",
+  },
+]
+
+const frequentSuppliers = [
+  { id: 1, name: "K. Perera" },
+  { id: 2, name: "S. Ahmed" },
+  { id: 3, name: "R. Silva" },
 ]
 
 export default function ProcurementPage() {
   const [formData, setFormData] = useState({
     supplier: "",
-    weight: "",
-    grade: "A",
-    date: new Date().toISOString().split("T")[0],
+    grossWeight: "",
+    moistureContent: "",
+    qualityGrade: "Grade A",
   })
-  const [records, setRecords] = useState(procurementRecords)
-
-  const calculateValue = () => {
-    const weight = Number.parseFloat(formData.weight) || 0
-    const rate = gradeRates[formData.grade as keyof typeof gradeRates]
-    return weight * rate
-  }
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const newRecord = {
-      id: records.length + 1,
-      supplier: formData.supplier,
-      weight: Number.parseFloat(formData.weight),
-      grade: formData.grade,
-      date: formData.date,
-      value: calculateValue(),
-    }
-    setRecords([newRecord, ...records])
+    // Handle form submission
+    console.log("Form submitted:", formData)
     setFormData({
       supplier: "",
-      weight: "",
-      grade: "A",
-      date: new Date().toISOString().split("T")[0],
+      grossWeight: "",
+      moistureContent: "",
+      qualityGrade: "Grade A",
     })
   }
 
-  const totalValue = records.reduce((sum, record) => sum + record.value, 0)
+  const handleClearForm = () => {
+    setFormData({
+      supplier: "",
+      grossWeight: "",
+      moistureContent: "",
+      qualityGrade: "Grade A",
+    })
+  }
+
+  const calculateNetWeight = () => {
+    const gross = Number.parseFloat(formData.grossWeight) || 0
+    const moisture = Number.parseFloat(formData.moistureContent) || 0
+    const netWeight = gross * (1 - moisture / 100)
+    return netWeight.toFixed(2)
+  }
 
   return (
     <LayoutWrapper>
       <div className="p-8">
-        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Leaf Procurement</h1>
-          <p className="text-muted-foreground">Record and manage tea leaf collections</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Green Leaf Procurement</h1>
+          <p className="text-muted-foreground">Digital Intake and Grading Interface.</p>
         </div>
 
-        {/* Collection Form */}
-        <Card className="p-6 border border-border bg-card mb-8">
-          <h2 className="text-xl font-semibold text-foreground mb-6">Record Collection</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className="p-6 border border-border bg-card">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">TODAY'S COLLECTION</p>
+            <p className="text-3xl font-bold text-foreground mb-1">1,245 kg</p>
+            <p className="text-xs text-muted-foreground">+12% from last month</p>
+          </Card>
+          <Card className="p-6 border border-border bg-card">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">SUPPLIERS TODAY</p>
+            <p className="text-3xl font-bold text-foreground mb-1">24</p>
+            <p className="text-xs text-muted-foreground">Active suppliers</p>
+          </Card>
+          <Card className="p-6 border border-border bg-card">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">AVG QUALITY SCORE</p>
+            <p className="text-3xl font-bold text-foreground mb-1">8.4/10</p>
+            <p className="text-xs text-muted-foreground">Grade A standard</p>
+          </Card>
+          <Card className="p-6 border border-border bg-card">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">PENDING PAYMENTS</p>
+            <p className="text-3xl font-bold text-foreground mb-1">LKR 55,200</p>
+            <p className="text-xs text-muted-foreground">3 suppliers</p>
+          </Card>
+        </div>
+
+        <Card className="p-8 border border-border bg-card mb-8">
+          <h2 className="text-lg font-bold text-foreground mb-6">NEW COLLECTION ENTRY</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {/* Supplier Selection */}
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Supplier Name</label>
-                <Input
-                  type="text"
-                  placeholder="Select supplier"
+                <label className="block text-xs font-semibold text-foreground mb-3">
+                  SELECT SUPPLIER <span className="text-red-500">*</span>
+                </label>
+                <select
                   value={formData.supplier}
                   onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Weight (kg)</label>
-                <Input
-                  type="number"
-                  placeholder="Enter weight"
-                  value={formData.weight}
-                  onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Grade</label>
-                <select
-                  value={formData.grade}
-                  onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                  <option value="A">Grade A (₹500/kg)</option>
-                  <option value="B">Grade B (₹350/kg)</option>
-                  <option value="C">Grade C (₹200/kg)</option>
+                  <option value="">Choose Supplier...</option>
+                  <option value="K. Perera">K. Perera</option>
+                  <option value="S. Ahmed">S. Ahmed</option>
+                  <option value="R. Silva">R. Silva</option>
                 </select>
               </div>
+
+              {/* Gross Weight */}
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Date</label>
+                <label className="block text-xs font-semibold text-foreground mb-3">
+                  GROSS WEIGHT (KG) <span className="text-red-500">*</span>
+                </label>
                 <Input
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  type="number"
+                  placeholder="000.00"
+                  value={formData.grossWeight}
+                  onChange={(e) => setFormData({ ...formData, grossWeight: e.target.value })}
+                  className="bg-muted border-0"
+                  required
+                />
+              </div>
+
+              {/* Moisture Content */}
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-3">
+                  MOISTURE CONTENT (%) <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="number"
+                  placeholder="00.00"
+                  value={formData.moistureContent}
+                  onChange={(e) => setFormData({ ...formData, moistureContent: e.target.value })}
+                  className="bg-muted border-0"
                   required
                 />
               </div>
             </div>
 
-            {/* Value Calculation */}
-            {formData.weight && (
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-foreground font-medium">Calculated Value:</span>
-                  <span className="text-2xl font-bold text-primary">₹{calculateValue().toLocaleString()}</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {/* Quality Grade */}
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-3">
+                  QUALITY GRADE <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={formData.qualityGrade}
+                  onChange={(e) => setFormData({ ...formData, qualityGrade: e.target.value })}
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="Grade A">Select Grade</option>
+                  <option value="Grade A">Grade A</option>
+                  <option value="Grade B">Grade B</option>
+                  <option value="Grade C">Grade C</option>
+                </select>
+              </div>
+
+              {/* Net Compensated Weight */}
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-3">NET COMPENSATED WEIGHT</label>
+                <div className="px-4 py-2 bg-muted rounded-lg text-foreground font-semibold">
+                  {calculateNetWeight()}KG
                 </div>
               </div>
-            )}
+
+              {/* Action Buttons */}
+              <div className="flex items-end gap-3">
+                <Button
+                  type="submit"
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold"
+                >
+                  Recored Entry ✓
+                </Button>
+              </div>
+            </div>
 
             <Button
-              type="submit"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
+              type="button"
+              onClick={handleClearForm}
+              variant="outline"
+              className="w-full bg-gray-200 hover:bg-gray-300 text-foreground border-0 font-semibold"
             >
-              <Plus className="w-4 h-4" />
-              Record Collection
+              Clear Form
             </Button>
           </form>
         </Card>
 
-        {/* Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6 border border-border bg-card">
-            <p className="text-sm text-muted-foreground mb-1">Total Collections</p>
-            <p className="text-3xl font-bold text-foreground">{records.length}</p>
-          </Card>
-          <Card className="p-6 border border-border bg-card">
-            <p className="text-sm text-muted-foreground mb-1">Total Weight</p>
-            <p className="text-3xl font-bold text-primary">
-              {records.reduce((sum, r) => sum + r.weight, 0).toLocaleString()} kg
-            </p>
-          </Card>
-          <Card className="p-6 border border-border bg-card">
-            <p className="text-sm text-muted-foreground mb-1">Total Value</p>
-            <p className="text-3xl font-bold text-secondary">₹{totalValue.toLocaleString()}</p>
-          </Card>
-        </div>
-
-        {/* Records Table */}
-        <Card className="p-6 border border-border bg-card">
+        <Card className="p-8 border border-border bg-card">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-foreground">Collection Records</h2>
-            <Button variant="outline" className="flex items-center gap-2 bg-transparent">
-              <Download className="w-4 h-4" />
-              Generate Report
-            </Button>
+            <h2 className="text-lg font-bold text-foreground">RECENT COLLECTIONS</h2>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input type="text" placeholder="Search" className="pl-10 bg-muted border-0 text-sm" />
+              </div>
+              <select className="px-4 py-2 bg-muted border-0 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
+                <option>Today</option>
+                <option>This Week</option>
+                <option>This Month</option>
+              </select>
+            </div>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* Table */}
+          <div className="overflow-x-auto mb-6">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Supplier</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Weight (kg)</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Grade</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Date</th>
-                  <th className="text-right py-3 px-4 font-semibold text-foreground">Value</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground text-xs">Time</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground text-xs">Supplier</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground text-xs">Gross(kg)</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground text-xs">Water(%)</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground text-xs">Net(kg)</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground text-xs">Grade</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground text-xs">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {records.map((record) => (
-                  <tr key={record.id} className="border-b border-border hover:bg-muted/50 transition-colors">
-                    <td className="py-3 px-4 text-foreground">{record.supplier}</td>
-                    <td className="py-3 px-4 text-foreground">{record.weight}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          record.grade === "A"
-                            ? "bg-primary/10 text-primary"
-                            : record.grade === "B"
-                              ? "bg-secondary/10 text-secondary"
-                              : "bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        Grade {record.grade}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-muted-foreground">{record.date}</td>
-                    <td className="py-3 px-4 text-right font-semibold text-foreground">
-                      ₹{record.value.toLocaleString()}
-                    </td>
+                {recentCollections.map((collection) => (
+                  <tr key={collection.id} className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="py-3 px-4 text-foreground">{collection.time}</td>
+                    <td className="py-3 px-4 text-foreground">{collection.supplier}</td>
+                    <td className="py-3 px-4 text-foreground">{collection.grossWeight}</td>
+                    <td className="py-3 px-4 text-foreground">{collection.waterContent}</td>
+                    <td className="py-3 px-4 text-foreground">{collection.netWeight}</td>
+                    <td className="py-3 px-4 text-foreground">{collection.grade}</td>
+                    <td className="py-3 px-4 text-foreground">{collection.status}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">Showing 4 of 24 entries today</p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                className="bg-gray-400 hover:bg-gray-500 text-white border-0"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Prev
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="bg-gray-400 hover:bg-gray-500 text-white border-0"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
         </Card>
+
+        <div className="mt-8">
+          <h2 className="text-lg font-bold text-foreground mb-4">QUICK ACCESS - FREQUENT SUPPLIERS</h2>
+          <div className="flex items-center gap-4">
+            {frequentSuppliers.map((supplier) => (
+              <Card key={supplier.id} className="px-6 py-4 border border-border bg-card">
+                <p className="text-foreground font-semibold">{supplier.name}</p>
+              </Card>
+            ))}
+            <Button variant="outline" className="bg-gray-400 hover:bg-gray-500 text-white border-0 font-semibold">
+              View All
+            </Button>
+          </div>
+        </div>
       </div>
     </LayoutWrapper>
   )
