@@ -16,6 +16,8 @@ const initialSuppliers = [
     contact: "9876543210",
     address: "123 Tea Lane, Darjeeling",
     bank: "HDFC Bank",
+    bankAccountNumber: "1234567890123456",
+    bankAccountName: "Green Valley Farms Pvt Ltd",
     totalCollected: "2500 kg",
     totalPaid: "₹1,25,000",
   },
@@ -25,6 +27,8 @@ const initialSuppliers = [
     contact: "9876543211",
     address: "456 Hill Road, Assam",
     bank: "ICICI Bank",
+    bankAccountNumber: "9876543210987654",
+    bankAccountName: "Mountain Tea Co",
     totalCollected: "1800 kg",
     totalPaid: "₹90,000",
   },
@@ -34,6 +38,8 @@ const initialSuppliers = [
     contact: "9876543212",
     address: "789 Sunrise Ave, Nilgiri",
     bank: "SBI",
+    bankAccountNumber: "5555666677778888",
+    bankAccountName: "Sunrise Estates Ltd",
     totalCollected: "3200 kg",
     totalPaid: "₹1,60,000",
   },
@@ -49,6 +55,8 @@ export default function SuppliersPage() {
     contact: "",
     address: "",
     bank: "",
+    bankAccountNumber: "",
+    bankAccountName: "",
   })
 
   const handleAddSupplier = (e: React.FormEvent) => {
@@ -60,7 +68,7 @@ export default function SuppliersPage() {
       totalPaid: "₹0",
     }
     setSuppliersList([...suppliersList, newSupplier])
-    setFormData({ name: "", contact: "", address: "", bank: "" })
+    setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setShowForm(false)
   }
 
@@ -68,7 +76,7 @@ export default function SuppliersPage() {
     e.preventDefault()
     if (!selectedSupplier) return
     setSuppliersList(suppliersList.map((s) => (s.id === selectedSupplier.id ? { ...s, ...formData } : s)))
-    setFormData({ name: "", contact: "", address: "", bank: "" })
+    setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setSelectedSupplier(null)
     setIsEditing(false)
   }
@@ -85,6 +93,8 @@ export default function SuppliersPage() {
       contact: supplier.contact,
       address: supplier.address,
       bank: supplier.bank,
+      bankAccountNumber: supplier.bankAccountNumber,
+      bankAccountName: supplier.bankAccountName,
     })
     setIsEditing(true)
   }
@@ -92,7 +102,7 @@ export default function SuppliersPage() {
   const closeModal = () => {
     setSelectedSupplier(null)
     setIsEditing(false)
-    setFormData({ name: "", contact: "", address: "", bank: "" })
+    setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
   }
 
   return (
@@ -117,7 +127,7 @@ export default function SuppliersPage() {
         {showForm && (
           <Card className="p-6 border border-border bg-card mb-8">
             <h2 className="text-xl font-semibold text-foreground mb-6">Register New Supplier</h2>
-            <form onSubmit={handleAddSupplier} className="space-y-4">
+            <form onSubmit={handleAddSupplier} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">Name</label>
@@ -139,7 +149,7 @@ export default function SuppliersPage() {
                     required
                   />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-foreground mb-2">Address</label>
                   <Input
                     type="text"
@@ -149,17 +159,44 @@ export default function SuppliersPage() {
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Bank Info</label>
-                  <Input
-                    type="text"
-                    placeholder="Bank name"
-                    value={formData.bank}
-                    onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                    required
-                  />
+              </div>
+
+              <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
+                    <Input
+                      type="text"
+                      placeholder="Bank name"
+                      value={formData.bank}
+                      onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">Bank Account Number</label>
+                    <Input
+                      type="text"
+                      placeholder="Account number"
+                      value={formData.bankAccountNumber}
+                      onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">Bank Account Name</label>
+                    <Input
+                      type="text"
+                      placeholder="Account holder name"
+                      value={formData.bankAccountName}
+                      onChange={(e) => setFormData({ ...formData, bankAccountName: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
+
               <div className="flex gap-3">
                 <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                   Register Supplier
@@ -246,7 +283,7 @@ export default function SuppliersPage() {
                 </div>
 
                 {isEditing ? (
-                  <form onSubmit={handleEditSupplier} className="space-y-4">
+                  <form onSubmit={handleEditSupplier} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">Name</label>
@@ -266,7 +303,7 @@ export default function SuppliersPage() {
                           required
                         />
                       </div>
-                      <div>
+                      <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-foreground mb-2">Address</label>
                         <Input
                           type="text"
@@ -275,16 +312,41 @@ export default function SuppliersPage() {
                           required
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">Bank Info</label>
-                        <Input
-                          type="text"
-                          value={formData.bank}
-                          onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                          required
-                        />
+                    </div>
+
+                    <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
+                          <Input
+                            type="text"
+                            value={formData.bank}
+                            onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-2">Bank Account Number</label>
+                          <Input
+                            type="text"
+                            value={formData.bankAccountNumber}
+                            onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-2">Bank Account Name</label>
+                          <Input
+                            type="text"
+                            value={formData.bankAccountName}
+                            onChange={(e) => setFormData({ ...formData, bankAccountName: e.target.value })}
+                            required
+                          />
+                        </div>
                       </div>
                     </div>
+
                     <div className="flex gap-3 pt-4">
                       <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                         Save Changes
@@ -305,14 +367,31 @@ export default function SuppliersPage() {
                         <p className="text-sm text-muted-foreground mb-1">Contact Number</p>
                         <p className="text-lg font-semibold text-foreground">{selectedSupplier.contact}</p>
                       </div>
-                      <div>
+                      <div className="md:col-span-2">
                         <p className="text-sm text-muted-foreground mb-1">Address</p>
                         <p className="text-lg font-semibold text-foreground">{selectedSupplier.address}</p>
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Bank Info</p>
-                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.bank}</p>
+                    </div>
+
+                    <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Bank Name</p>
+                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bank}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Bank Account Number</p>
+                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bankAccountNumber}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Bank Account Name</p>
+                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bankAccountName}</p>
+                        </div>
                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Total Collected</p>
                         <p className="text-lg font-semibold text-primary">{selectedSupplier.totalCollected}</p>
@@ -322,6 +401,7 @@ export default function SuppliersPage() {
                         <p className="text-lg font-semibold text-foreground">{selectedSupplier.totalPaid}</p>
                       </div>
                     </div>
+
                     <div className="flex gap-3 pt-4">
                       <Button
                         onClick={() => openEditModal(selectedSupplier)}
