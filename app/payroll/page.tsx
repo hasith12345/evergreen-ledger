@@ -4,7 +4,15 @@ import { useState } from "react"
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { MessageSquare, CheckCircle, Clock } from "lucide-react"
+import { MessageSquare, CheckCircle, Clock, Check, XIcon } from "lucide-react"
+import { useToast } from '@/hooks/use-toast'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from '@/components/ui/dialog'
 
 const paymentRecords = [
   {
@@ -67,13 +75,27 @@ const paymentRecords = [
 export default function PayrollPage() {
   const [payments, setPayments] = useState(paymentRecords)
   const [selectedPayment, setSelectedPayment] = useState<(typeof paymentRecords)[0] | null>(null)
+  const { toast } = useToast()
+  const [successOpen, setSuccessOpen] = useState(false)
+  const [successTitle, setSuccessTitle] = useState<string | null>(null)
+  const [successDescription, setSuccessDescription] = useState<string | null>(null)
 
   const handleMarkAsPaid = (id: number) => {
     setPayments(payments.map((p) => (p.id === id ? { ...p, status: "Paid" } : p)))
+    const paid = payments.find((p) => p.id === id)
+    if (paid) {
+      // show centered success modal instead of toast
+      setSuccessTitle('Payment transferred')
+      setSuccessDescription(`Rs. ${paid.amount.toLocaleString()} has been transferred to ${paid.supplier}.`)
+      setSuccessOpen(true)
+    }
   }
 
   const handleSendSMS = (phone: string, amount: number) => {
-    alert(`SMS sent to ${phone}: "Payment of Rs.${amount.toLocaleString()} has been processed. Thank you!"`)
+    // show centered success modal instead of toast
+    setSuccessTitle('SMS sent')
+    setSuccessDescription(`SMS sent to ${phone}: Payment of Rs.${amount.toLocaleString()} has been processed.`)
+    setSuccessOpen(true)
   }
 
   const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0)
@@ -209,6 +231,40 @@ export default function PayrollPage() {
             </table>
           </div>
         </Card>
+        {/* Centered success modal with animated tick */}
+        <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
+          <DialogContent className="max-w-md text-center">
+            {/* Animated checkmark */}
+            <div className="flex justify-center mb-4">
+              <svg className="w-20 h-20" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <circle cx="60" cy="60" r="54" stroke="#10B981" strokeWidth="4" className="opacity-10" />
+                <path d="M36 62l12 12 36-36" stroke="#10B981" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" className="checkmark" />
+              </svg>
+            </div>
+            <DialogTitle className="mb-2">{successTitle}</DialogTitle>
+            {successDescription && <DialogDescription className="mb-4">{successDescription}</DialogDescription>}
+            <div className="flex justify-center">
+              <button
+                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-white hover:opacity-95"
+                onClick={() => setSuccessOpen(false)}
+              >
+                OK
+              </button>
+            </div>
+            <DialogClose className="sr-only">Close</DialogClose>
+            {/* inline styles for checkmark animation */}
+            <style>{`
+              .checkmark {
+                stroke-dasharray: 100;
+                stroke-dashoffset: 100;
+                animation: draw 0.6s ease forwards 0.1s;
+              }
+              @keyframes draw {
+                to { stroke-dashoffset: 0; }
+              }
+            `}</style>
+          </DialogContent>
+        </Dialog>
       </div>
     </LayoutWrapper>
   )
