@@ -2,12 +2,19 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Plus, Edit2, Eye, X } from "lucide-react"
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select"
 
 const initialSuppliers = [
   {
@@ -67,7 +74,28 @@ const initialSuppliers = [
   },
 ]
 
+const BANKS = [
+  'Amana Bank PLC',
+  'Bank of Ceylon',
+  'Bank of China Ltd (Colombo branch)',
+  'Cargills Bank PLC',
+  'Citibank N.A.',
+  'Commercial Bank of Ceylon PLC',
+  'DFCC Bank PLC',
+  'Habib Bank Ltd',
+  'Hatton National Bank PLC',
+  'National Development Bank PLC',
+  'Nations Trust Bank PLC',
+  'Pan Asia Banking Corporation PLC',
+  "People’s Bank",
+  'Sampath Bank PLC',
+  'Seylan Bank PLC',
+  'Standard Chartered Bank Sri Lanka',
+]
+
 export default function SuppliersPage() {
+  const STORAGE_KEY = 'evergreen_suppliers_v1'
+
   const [suppliersList, setSuppliersList] = useState(initialSuppliers)
   const [showForm, setShowForm] = useState(false)
   const [selectedSupplier, setSelectedSupplier] = useState<(typeof initialSuppliers)[0] | null>(null)
@@ -93,6 +121,31 @@ export default function SuppliersPage() {
     setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setShowForm(false)
   }
+
+  // Persist suppliers to localStorage so they survive navigation/refresh
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed) && parsed.length) {
+          setSuppliersList(parsed)
+        }
+      }
+    } catch (e) {
+      // ignore parse errors
+      console.warn('Failed to load suppliers from localStorage', e)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(suppliersList))
+    } catch (e) {
+      console.warn('Failed to save suppliers to localStorage', e)
+    }
+  }, [suppliersList])
 
   const handleEditSupplier = (e: React.FormEvent) => {
     e.preventDefault()
@@ -188,13 +241,22 @@ export default function SuppliersPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
-                    <Input
-                      type="text"
-                      placeholder="Bank name"
+                    <Select
                       value={formData.bank}
-                      onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                      required
-                    />
+                      onValueChange={(val) => setFormData({ ...formData, bank: val })}
+                      className="w-full"
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select bank" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BANKS.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">Bank Account Number</label>
@@ -341,12 +403,22 @@ export default function SuppliersPage() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
-                          <Input
-                            type="text"
+                          <Select
                             value={formData.bank}
-                            onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                            required
-                          />
+                            onValueChange={(val) => setFormData({ ...formData, bank: val })}
+                            className="w-full"
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select bank" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {BANKS.map((b) => (
+                                <SelectItem key={b} value={b}>
+                                  {b}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-2">Bank Account Number</label>
