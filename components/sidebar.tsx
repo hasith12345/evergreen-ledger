@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutDashboard, Users, Leaf, DollarSign, Settings, LogOut } from "lucide-react"
+import WeatherWidget from './weather'
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -68,6 +69,11 @@ export function Sidebar() {
           )
         })}
       </nav>
+
+      {/* Weather (today) - moved after tabs */}
+      <div className="px-3 mt-2">
+        <WeatherWidget />
+      </div>
 
       {/* Logout */}
       <div className="p-4 border-t border-emerald-700/40">
