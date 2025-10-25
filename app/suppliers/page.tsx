@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -131,10 +130,15 @@ export default function SuppliersPage() {
     setSuppliersList([...suppliersList, newSupplier])
     setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setShowForm(false)
-    // show success toast with animated tick
+    // show success toast with animated tick (title must be plain text for the Toast component)
     toast({
-      title: "✅ Supplier added",
-      description: `${newSupplier.name} was successfully added.`,
+      title: 'Supplier added',
+      description: (
+        <div className="flex items-center gap-2">
+          <Check className="w-5 h-5 text-green-500 animate-pulse" />
+          <span>{newSupplier.name} was successfully added.</span>
+        </div>
+      ),
     })
   }
 
@@ -147,10 +151,15 @@ export default function SuppliersPage() {
     setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setSelectedSupplier(null)
     setIsEditing(false)
-    // show success toast
+    // show success toast (title must be plain text)
     toast({
-      title: "✅ Supplier updated",
-      description: "Changes saved successfully.",
+      title: 'Supplier updated',
+      description: (
+        <div className="flex items-center gap-2">
+          <Check className="w-5 h-5 text-green-500 animate-pulse" />
+          <span>Changes saved successfully.</span>
+        </div>
+      ),
     })
   }
 
@@ -191,17 +200,16 @@ export default function SuppliersPage() {
 
 
   return (
-    <LayoutWrapper>
-      <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Suppliers</h1>
-            <p className="text-muted-foreground">Manage your tea leaf suppliers</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">Suppliers</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Manage your tea leaf suppliers</p>
           </div>
           <Button
             onClick={() => setShowForm(!showForm)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 min-h-[44px] touch-manipulation w-full sm:w-auto"
           >
             <Plus className="w-4 h-4" />
             Add Supplier
@@ -210,10 +218,10 @@ export default function SuppliersPage() {
 
         {/* Registration Form */}
         {showForm && (
-          <Card className="p-6 border border-border bg-card mb-8">
-            <h2 className="text-xl font-semibold text-foreground mb-6">Register New Supplier</h2>
-            <form onSubmit={handleAddSupplier} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="p-4 sm:p-6 border border-border bg-card mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4 sm:mb-6">Register New Supplier</h2>
+            <form onSubmit={handleAddSupplier} className="space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">Name</label>
                   <Input
@@ -221,6 +229,7 @@ export default function SuppliersPage() {
                     placeholder="Supplier name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="h-11 text-base"
                     required
                   />
                 </div>
@@ -231,31 +240,33 @@ export default function SuppliersPage() {
                     placeholder="Phone number"
                     value={formData.contact}
                     onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                    className="h-11 text-base"
                     required
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-foreground mb-2">Address</label>
                   <Input
                     type="text"
                     placeholder="Full address"
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="h-11 text-base"
                     required
                   />
                 </div>
               </div>
 
-              <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="border-2 border-primary/30 rounded-lg p-4 sm:p-6 bg-primary/5">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
                     <Select
                       value={formData.bank}
                       onValueChange={(val) => setFormData({ ...formData, bank: val })}
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full h-11">
                         <SelectValue placeholder="Select bank" />
                       </SelectTrigger>
                       <SelectContent>
@@ -274,6 +285,7 @@ export default function SuppliersPage() {
                       placeholder="Account number"
                       value={formData.bankAccountNumber}
                       onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                      className="h-11 text-base"
                       required
                     />
                   </div>
@@ -284,20 +296,24 @@ export default function SuppliersPage() {
                       placeholder="Account holder name"
                       value={formData.bankAccountName}
                       onChange={(e) => setFormData({ ...formData, bankAccountName: e.target.value })}
+                      className="h-11 text-base"
                       required
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button 
+                  type="submit" 
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px] touch-manipulation"
+                >
                   Register Supplier
                 </Button>
                 <Button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="bg-muted hover:bg-muted/80 text-foreground"
+                  className="bg-muted hover:bg-muted/80 text-foreground min-h-[44px] touch-manipulation"
                 >
                   Cancel
                 </Button>
@@ -332,61 +348,61 @@ export default function SuppliersPage() {
         </Dialog>
 
         {/* Suppliers List */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {suppliersList.map((supplier) => (
-            <Card key={supplier.id} className="p-6 border border-border bg-card hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-4">
-                <div>
+            <Card key={supplier.id} className="p-4 sm:p-6 border border-border bg-card hover:shadow-md transition-shadow">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
+                <div className="flex-1">
                   <h3 className="text-lg font-semibold text-foreground">{supplier.name}</h3>
-                  <p className="text-sm text-muted-foreground">{supplier.address}</p>
+                  <p className="text-sm text-muted-foreground mt-1 break-words">{supplier.address}</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2 sm:flex-nowrap">
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex items-center gap-2 bg-transparent"
+                    className="flex items-center gap-2 bg-transparent min-h-[40px] touch-manipulation flex-1 sm:flex-none"
                     onClick={() => openViewModal(supplier)}
                   >
                     <Eye className="w-4 h-4" />
-                    View
+                    <span className="sm:inline">View</span>
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex items-center gap-2 bg-transparent"
+                    className="flex items-center gap-2 bg-transparent min-h-[40px] touch-manipulation flex-1 sm:flex-none"
                     onClick={() => openEditModal(supplier)}
                   >
                     <Edit2 className="w-4 h-4" />
-                    Edit
+                    <span className="sm:inline">Edit</span>
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex items-center gap-2 bg-transparent text-destructive border-destructive hover:bg-destructive/10"
+                    className="flex items-center gap-2 bg-transparent text-destructive border-destructive hover:bg-destructive/10 min-h-[40px] touch-manipulation flex-1 sm:flex-none"
                     onClick={() => setDeleteTarget(supplier)}
                   >
                     <Trash2 className="w-4 h-4" />
-                    Delete
+                    <span className="sm:inline">Delete</span>
                   </Button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
+              <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div className="min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Contact</p>
-                  <p className="font-semibold text-foreground">{supplier.contact}</p>
+                  <p className="font-semibold text-foreground text-sm break-all">{supplier.contact}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Bank</p>
-                  <p className="font-semibold text-foreground">{supplier.bank}</p>
+                  <p className="font-semibold text-foreground text-sm truncate" title={supplier.bank}>{supplier.bank}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Total Collected</p>
-                  <p className="font-semibold text-primary">{supplier.totalCollected}</p>
+                  <p className="font-semibold text-primary text-sm">{supplier.totalCollected}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Total Paid</p>
-                  <p className="font-semibold text-foreground">{supplier.totalPaid}</p>
+                  <p className="font-semibold text-foreground text-sm">{supplier.totalPaid}</p>
                 </div>
               </div>
             </Card>
@@ -394,30 +410,31 @@ export default function SuppliersPage() {
         </div>
 
         {selectedSupplier && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <Card className="w-full max-w-2xl border border-border bg-card">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-foreground">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+            <Card className="w-full max-w-2xl border border-border bg-card my-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
+              <div className="p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4 sm:mb-6 sticky top-0 bg-card pb-4 border-b">
+                  <h2 className="text-lg sm:text-2xl font-bold text-foreground">
                     {isEditing ? "Edit Supplier" : "Supplier Details"}
                   </h2>
                   <button
                     onClick={closeModal}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground hover:text-foreground transition-colors p-2 touch-manipulation"
                   >
-                    <X className="w-6 h-6" />
+                    <X className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                 </div>
 
                 {isEditing ? (
-                  <form onSubmit={handleEditSupplier} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <form onSubmit={handleEditSupplier} className="space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">Name</label>
                         <Input
                           type="text"
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="h-11 text-base"
                           required
                         />
                       </div>
@@ -427,30 +444,32 @@ export default function SuppliersPage() {
                           type="tel"
                           value={formData.contact}
                           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                          className="h-11 text-base"
                           required
                         />
                       </div>
-                      <div className="md:col-span-2">
+                      <div className="sm:col-span-2">
                         <label className="block text-sm font-medium text-foreground mb-2">Address</label>
                         <Input
                           type="text"
                           value={formData.address}
                           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          className="h-11 text-base"
                           required
                         />
                       </div>
                     </div>
 
-                    <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
-                      <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="border-2 border-primary/30 rounded-lg p-4 sm:p-6 bg-primary/5">
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
                           <Select
                             value={formData.bank}
                             onValueChange={(val) => setFormData({ ...formData, bank: val })}
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full h-11">
                               <SelectValue placeholder="Select bank" />
                             </SelectTrigger>
                             <SelectContent>
@@ -468,6 +487,7 @@ export default function SuppliersPage() {
                             type="text"
                             value={formData.bankAccountNumber}
                             onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                            className="h-11 text-base"
                             required
                           />
                         </div>
@@ -477,83 +497,94 @@ export default function SuppliersPage() {
                             type="text"
                             value={formData.bankAccountName}
                             onChange={(e) => setFormData({ ...formData, bankAccountName: e.target.value })}
+                            className="h-11 text-base"
                             required
                           />
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex gap-3 pt-4">
-                      <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                    <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                      <Button 
+                        type="submit" 
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px] touch-manipulation"
+                      >
                         Save Changes
                       </Button>
-                      <Button type="button" onClick={closeModal} className="bg-muted hover:bg-muted/80 text-foreground">
+                      <Button 
+                        type="button" 
+                        onClick={closeModal} 
+                        className="bg-muted hover:bg-muted/80 text-foreground min-h-[44px] touch-manipulation"
+                      >
                         Cancel
                       </Button>
                     </div>
                   </form>
                 ) : (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Name</p>
-                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.name}</p>
+                        <p className="text-base sm:text-lg font-semibold text-foreground break-words">{selectedSupplier.name}</p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Contact Number</p>
-                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.contact}</p>
+                        <p className="text-base sm:text-lg font-semibold text-foreground break-all">{selectedSupplier.contact}</p>
                       </div>
-                      <div className="md:col-span-2">
+                      <div className="sm:col-span-2">
                         <p className="text-sm text-muted-foreground mb-1">Address</p>
-                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.address}</p>
+                        <p className="text-base sm:text-lg font-semibold text-foreground break-words">{selectedSupplier.address}</p>
                       </div>
                     </div>
 
-                    <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
-                      <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="border-2 border-primary/30 rounded-lg p-4 sm:p-6 bg-primary/5">
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                         <div>
                           <p className="text-sm text-muted-foreground mb-1">Bank Name</p>
-                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bank}</p>
+                          <p className="text-base sm:text-lg font-semibold text-foreground break-words">{selectedSupplier.bank}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground mb-1">Bank Account Number</p>
-                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bankAccountNumber}</p>
+                          <p className="text-base sm:text-lg font-semibold text-foreground break-all">{selectedSupplier.bankAccountNumber}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground mb-1">Bank Account Name</p>
-                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bankAccountName}</p>
+                          <p className="text-base sm:text-lg font-semibold text-foreground break-words">{selectedSupplier.bankAccountName}</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Total Collected</p>
-                        <p className="text-lg font-semibold text-primary">{selectedSupplier.totalCollected}</p>
+                        <p className="text-base sm:text-lg font-semibold text-primary">{selectedSupplier.totalCollected}</p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Total Paid</p>
-                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.totalPaid}</p>
+                        <p className="text-base sm:text-lg font-semibold text-foreground">{selectedSupplier.totalPaid}</p>
                       </div>
                     </div>
 
-                    <div className="flex gap-3 pt-4">
+                    <div className="flex flex-col sm:flex-row gap-3 pt-4">
                       <Button
                         onClick={() => openEditModal(selectedSupplier)}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 min-h-[44px] touch-manipulation"
                       >
                         <Edit2 className="w-4 h-4" />
                         Edit Supplier
                       </Button>
                       <Button
                         onClick={() => selectedSupplier && setDeleteTarget(selectedSupplier)}
-                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground flex items-center gap-2"
+                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground flex items-center justify-center gap-2 min-h-[44px] touch-manipulation"
                       >
                         <Trash2 className="w-4 h-4" />
                         Delete Supplier
                       </Button>
-                      <Button onClick={closeModal} className="bg-muted hover:bg-muted/80 text-foreground">
+                      <Button 
+                        onClick={closeModal} 
+                        className="bg-muted hover:bg-muted/80 text-foreground min-h-[44px] touch-manipulation"
+                      >
                         Close
                       </Button>
                     </div>
@@ -564,6 +595,5 @@ export default function SuppliersPage() {
           </div>
         )}
       </div>
-    </LayoutWrapper>
   )
 }
