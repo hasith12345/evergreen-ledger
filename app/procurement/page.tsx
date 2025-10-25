@@ -91,6 +91,19 @@ export default function ProcurementPage() {
     })
   }
 
+  const handleUseCurrentHumidity = () => {
+    try {
+      const val = localStorage.getItem('evergreen_weather_humidity')
+      if (val) {
+        setFormData({ ...formData, moistureContent: val })
+      } else {
+        // no humidity available; leave as is
+      }
+    } catch (e) {
+      // ignore localStorage errors
+    }
+  }
+
   const calculateNetWeight = () => {
     const gross = Number.parseFloat(formData.grossWeight) || 0
     const moisture = Number.parseFloat(formData.moistureContent) || 0
@@ -239,6 +252,15 @@ export default function ProcurementPage() {
                   className="bg-muted border-0"
                   required
                 />
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={handleUseCurrentHumidity}
+                    className="text-xs text-foreground/80 hover:text-foreground underline"
+                  >
+                    Use current humidity from weather
+                  </button>
+                </div>
               </div>
             </div>
 
