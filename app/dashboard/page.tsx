@@ -2,6 +2,8 @@
 
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { useState } from "react"
 import {
   LineChart,
   Line,
@@ -14,7 +16,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts"
-import { TrendingUp, Package, Clock } from "lucide-react"
+import { TrendingUp, Package, Clock, ChevronLeft, ChevronRight } from "lucide-react"
 
 const dashboardData = [
   { month: "Jan", collected: 2400, processed: 1400 },
@@ -34,6 +36,17 @@ const recentActivities = [
 ]
 
 export default function DashboardPage() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(5)
+
+  // pagination helpers for recentActivities
+  const totalItems = recentActivities.length
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+  const current = Math.min(Math.max(1, currentPage), totalPages)
+  const startIndex = (current - 1) * pageSize
+  const endIndex = Math.min(startIndex + pageSize, totalItems)
+  const paginatedActivities = recentActivities.slice(startIndex, endIndex)
+
   return (
     <LayoutWrapper>
       <div className="p-8">
@@ -144,7 +157,7 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {recentActivities.map((activity) => (
+                {paginatedActivities.map((activity) => (
                   <tr key={activity.id} className="border-b border-border hover:bg-muted/50 transition-colors">
                     <td className="py-3 px-4 text-foreground">{activity.supplier}</td>
                     <td className="py-3 px-4 text-foreground">{activity.weight}</td>
@@ -166,6 +179,52 @@ export default function DashboardPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+          {/* Pagination */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mt-4">
+            <div className="text-sm text-muted-foreground">Showing {startIndex + 1} - {endIndex} of {totalItems} entries</div>
+
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Rows:</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1) }}
+                  className="appearance-none px-3 py-1 bg-muted rounded-lg text-sm text-foreground border-0"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                </select>
+              </div>
+
+              <nav className="flex items-center gap-2" aria-label="Pagination">
+                <Button size="sm" variant="outline" onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="bg-transparent">First</Button>
+
+                <Button size="sm" variant="outline" onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className="bg-transparent">
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+
+                {[...Array(totalPages)].map((_, i) => {
+                  const page = i + 1
+                  const isActive = page === currentPage
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-1 rounded-md text-sm ${isActive ? 'bg-primary text-primary-foreground' : 'bg-transparent text-foreground hover:bg-muted/50'}`}
+                      aria-current={isActive ? 'page' : undefined}
+                    >{page}</button>
+                  )
+                })}
+
+                <Button size="sm" variant="outline" onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className="bg-transparent">
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+
+                <Button size="sm" variant="outline" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="bg-transparent">Last</Button>
+              </nav>
+            </div>
           </div>
         </Card>
       </div>
