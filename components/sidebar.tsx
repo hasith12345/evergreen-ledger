@@ -142,11 +142,11 @@ export function Sidebar() {
       </div>
 
       {/* Mobile drawer overlay + full-height drawer (no internal scroll) */}
-  <div className={`fixed inset-0 z-40 md:hidden`} aria-hidden={!mobileOpen}>
+  <div className={`fixed inset-0 z-40 md:hidden ${mobileOpen ? "" : "pointer-events-none"}`} aria-hidden={!mobileOpen}>
         {/* overlay */}
         <div
           className={`absolute bg-black/40 transition-opacity duration-300 ${
-            mobileOpen ? "opacity-100 " : "opacity-0"
+            mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
           onClick={() => setMobileOpen(false)}
         />
@@ -157,7 +157,7 @@ export function Sidebar() {
           aria-modal="true"
           aria-label="Main menu"
           className={`fixed left-0 top-0 bottom-0 w-80 max-w-full h-screen transform bg-gradient-to-b from-emerald-800 to-emerald-900 text-white shadow-xl transition-transform duration-300 ease-in-out ${
-            mobileOpen ? "translate-x-0" : "-translate-x-full"
+            mobileOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none"
           }`}
         >
           <div className="p-3 md:p-4 flex items-center justify-between border-b border-emerald-700/30">

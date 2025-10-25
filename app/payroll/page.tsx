@@ -109,8 +109,8 @@ export default function PayrollPage() {
           <p className="text-muted-foreground">Manage supplier payments and notifications</p>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  {/* Summary Cards */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6 border border-border bg-card">
             <p className="text-sm text-muted-foreground mb-1">Total Amount</p>
             <p className="text-3xl font-bold text-foreground">Rs. {totalAmount.toLocaleString()}</p>
@@ -135,20 +135,20 @@ export default function PayrollPage() {
         {/* Payment Calculation Section */}
         <Card className="p-6 border border-border bg-card mb-8">
           <h2 className="text-lg font-semibold text-foreground mb-6">Payment Calculation</h2>
-          <div className="bg-secondary/5 border border-secondary/20 rounded-lg p-4 space-y-3">
-            <div className="flex justify-between items-center">
+          <div className="bg-secondary/5 border border-secondary/20 rounded-lg p-4 space-y-3 sm:space-y-0 sm:flex sm:gap-3">
+            <div className="flex-1 flex justify-between items-center">
               <span className="text-foreground">Formula:</span>
               <span className="font-mono text-sm text-muted-foreground">Payment = Weight (kg) × Grade Rate (Rs/kg)</span>
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex-1 flex justify-between items-center">
               <span className="text-foreground">Grade A Rate:</span>
               <span className="font-semibold text-primary">Rs. 500/kg</span>
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex-1 flex justify-between items-center">
               <span className="text-foreground">Grade B Rate:</span>
               <span className="font-semibold text-secondary">Rs. 350/kg</span>
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex-1 flex justify-between items-center">
               <span className="text-foreground">Grade C Rate:</span>
               <span className="font-semibold text-muted-foreground">Rs. 200/kg</span>
             </div>
@@ -158,7 +158,32 @@ export default function PayrollPage() {
         {/* Payments Table */}
         <Card className="p-6 border border-border bg-card">
           <h2 className="text-lg font-semibold text-foreground mb-6">Payment Records</h2>
-          <div className="overflow-x-auto">
+          {/* Mobile list view */}
+          <div className="sm:hidden space-y-3">
+            {payments.map((payment) => (
+              <Card key={payment.id} className="p-4 border border-border bg-card">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="font-medium text-foreground">{payment.supplier}</div>
+                    <div className="text-xs text-muted-foreground">{payment.date} • {payment.weight}kg • Grade {payment.grade}</div>
+                    <div className="mt-2 font-semibold">Rs. {payment.amount.toLocaleString()}</div>
+                  </div>
+                  <div className="ml-4 flex flex-col gap-2">
+                    {payment.status === "Pending" && (
+                      <Button size="sm" variant="outline" onClick={() => handleMarkAsPaid(payment.id)} className="text-xs">
+                        Mark Paid
+                      </Button>
+                    )}
+                    <Button size="sm" variant="outline" onClick={() => handleSendSMS(payment.phone, payment.amount)} className="flex items-center gap-1 text-xs">
+                      <MessageSquare className="w-3 h-3" /> SMS
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div className="overflow-x-auto hidden sm:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
