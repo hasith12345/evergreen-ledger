@@ -7,7 +7,7 @@ import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Save, Eye, EyeOff } from "lucide-react"
+import { Save, Eye, EyeOff, ShieldCheck } from "lucide-react"
 
 const defaultRates = [
   { grade: "A", rate: 500 },
@@ -28,6 +28,7 @@ export default function SettingsPage() {
     confirm: false,
   })
   const [saveMessage, setSaveMessage] = useState("")
+  const [passwordMessage, setPasswordMessage] = useState("")
 
   const handleRateChange = (index: number, newRate: string) => {
     const updatedRates = [...rates]
@@ -43,19 +44,18 @@ export default function SettingsPage() {
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault()
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert("New passwords do not match!")
+      setPasswordMessage("New passwords do not match.")
       return
     }
     if (passwordForm.newPassword.length < 8) {
-      alert("Password must be at least 8 characters long!")
+      setPasswordMessage("Password must be at least 8 characters long.")
       return
     }
-    alert("Password changed successfully!")
-    setPasswordForm({
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    })
+
+    // Simulate success
+    setPasswordMessage("Password changed successfully!")
+    setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" })
+    setTimeout(() => setPasswordMessage(""), 3000)
   }
 
   return (
@@ -105,75 +105,100 @@ export default function SettingsPage() {
           </Button>
         </Card>
 
-        {/* Password Change */}
+        {/* Password Change - modernized */}
         <Card className="p-6 border border-border bg-card">
-          <h2 className="text-xl font-semibold text-foreground mb-6">Change Password</h2>
-          <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Old Password</label>
-              <div className="relative">
-                <Input
-                  type={showPasswords.old ? "text" : "password"}
-                  placeholder="Enter old password"
-                  value={passwordForm.oldPassword}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswords({ ...showPasswords, old: !showPasswords.old })}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPasswords.old ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
+          <div className="md:flex md:items-start md:gap-6">
+            <div className="md:flex-1">
+              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-primary" /> Change Password
+              </h2>
+
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Old Password</label>
+                  <div className="relative">
+                    <Input
+                      type={showPasswords.old ? "text" : "password"}
+                      placeholder="Enter old password"
+                      value={passwordForm.oldPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({ ...showPasswords, old: !showPasswords.old })}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPasswords.old ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">New Password</label>
+                  <div className="relative">
+                    <Input
+                      type={showPasswords.new ? "text" : "password"}
+                      placeholder="Enter new password"
+                      value={passwordForm.newPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Use a strong password — at least 8 characters, with numbers and symbols.</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Confirm New Password</label>
+                  <div className="relative">
+                    <Input
+                      type={showPasswords.confirm ? "text" : "password"}
+                      placeholder="Confirm new password"
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-2">
+                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                    Update Password
+                  </Button>
+                </div>
+
+                {passwordMessage && (
+                  <div className={`mt-3 text-sm ${passwordMessage.includes('successfully') ? 'text-primary' : 'text-destructive'}`}>
+                    {passwordMessage}
+                  </div>
+                )}
+              </form>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">New Password</label>
-              <div className="relative">
-                <Input
-                  type={showPasswords.new ? "text" : "password"}
-                  placeholder="Enter new password"
-                  value={passwordForm.newPassword}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+            <aside className="mt-6 md:mt-0 md:w-80">
+              <div className="bg-muted/50 p-4 rounded-lg flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-primary mt-1" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Password guidance</p>
+                  <p className="text-xs text-muted-foreground">Use a password of at least 8 characters. Avoid reusing old passwords and consider using a password manager for stronger security.</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Minimum 8 characters</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Confirm New Password</label>
-              <div className="relative">
-                <Input
-                  type={showPasswords.confirm ? "text" : "password"}
-                  placeholder="Confirm new password"
-                  value={passwordForm.confirmPassword}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-              Update Password
-            </Button>
-          </form>
+            </aside>
+          </div>
         </Card>
       </div>
     </LayoutWrapper>
