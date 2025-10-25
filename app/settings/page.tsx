@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -59,8 +58,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <LayoutWrapper>
-      <div className="p-8">
+    <div className="p-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Settings</h1>
@@ -201,6 +199,5 @@ export default function SettingsPage() {
           </div>
         </Card>
       </div>
-    </LayoutWrapper>
   )
 }

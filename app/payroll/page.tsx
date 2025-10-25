@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MessageSquare, CheckCircle, Clock, Check, XIcon } from "lucide-react"
@@ -103,8 +102,7 @@ export default function PayrollPage() {
   const pendingAmount = payments.filter((p) => p.status === "Pending").reduce((sum, p) => sum + p.amount, 0)
 
   return (
-    <LayoutWrapper>
-      <div className="p-8">
+    <div className="p-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Payroll Management</h1>
@@ -266,6 +264,5 @@ export default function PayrollPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </LayoutWrapper>
   )
 }

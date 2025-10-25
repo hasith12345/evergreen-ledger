@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useState } from "react"
-import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -127,8 +126,7 @@ export default function ProcurementPage() {
   const paginatedCollections = filteredCollections.slice(startIndex, endIndex)
 
   return (
-    <LayoutWrapper>
-      <div className="p-8">
+    <div className="p-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Green Leaf Procurement</h1>
           <p className="text-muted-foreground">Digital Intake and Grading Interface.</p>
@@ -527,6 +525,5 @@ export default function ProcurementPage() {
           </div>
         </div>
       </div>
-    </LayoutWrapper>
   )
 }

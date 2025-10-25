@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -130,15 +129,15 @@ export default function SuppliersPage() {
     setSuppliersList([...suppliersList, newSupplier])
     setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setShowForm(false)
-    // show success toast with animated tick
+    // show success toast with animated tick (title must be plain text for the Toast component)
     toast({
-      title: (
+      title: 'Supplier added',
+      description: (
         <div className="flex items-center gap-2">
           <Check className="w-5 h-5 text-green-500 animate-pulse" />
-          <span>Supplier added</span>
+          <span>{newSupplier.name} was successfully added.</span>
         </div>
       ),
-      description: `${newSupplier.name} was successfully added.`,
     })
   }
 
@@ -174,15 +173,15 @@ export default function SuppliersPage() {
     setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setSelectedSupplier(null)
     setIsEditing(false)
-    // show success toast
+    // show success toast (title must be plain text)
     toast({
-      title: (
+      title: 'Supplier updated',
+      description: (
         <div className="flex items-center gap-2">
           <Check className="w-5 h-5 text-green-500 animate-pulse" />
-          <span>Supplier updated</span>
+          <span>Changes saved successfully.</span>
         </div>
       ),
-      description: `Changes saved successfully.`,
     })
   }
 
@@ -221,8 +220,7 @@ export default function SuppliersPage() {
   }
 
   return (
-    <LayoutWrapper>
-      <div className="p-8">
+    <div className="p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -284,7 +282,6 @@ export default function SuppliersPage() {
                     <Select
                       value={formData.bank}
                       onValueChange={(val) => setFormData({ ...formData, bank: val })}
-                      className="w-full"
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select bank" />
@@ -480,7 +477,6 @@ export default function SuppliersPage() {
                           <Select
                             value={formData.bank}
                             onValueChange={(val) => setFormData({ ...formData, bank: val })}
-                            className="w-full"
                           >
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select bank" />
@@ -596,6 +592,5 @@ export default function SuppliersPage() {
           </div>
         )}
       </div>
-    </LayoutWrapper>
   )
 }
