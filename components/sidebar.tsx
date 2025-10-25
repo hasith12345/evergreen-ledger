@@ -121,8 +121,8 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Desktop / tablet sidebar */}
-      <aside className="hidden md:flex w-72 bg-gradient-to-b from-emerald-800 to-emerald-900 text-white min-h-screen flex-col shadow-lg sticky top-0">
+      {/* Desktop / tablet sidebar — fixed so it doesn't scroll with the page */}
+      <aside className="hidden md:flex w-72 bg-gradient-to-b from-emerald-800 to-emerald-900 text-white h-screen flex-col shadow-lg fixed left-0 top-0 z-20">
         {SidebarContent}
       </aside>
 
