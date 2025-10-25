@@ -28,9 +28,6 @@ export function Sidebar() {
             className="w-9 h-9 object-contain"
             style={{ imageRendering: 'crisp-edges' }}
           />
-          <span className="absolute -top-1 -right-1 bg-emerald-600 rounded-full p-0.5 ring-1 ring-white/20 shadow-sm">
-            <Leaf className="w-3 h-3 text-white" />
-          </span>
         </div>
         <div className="flex flex-col leading-tight">
           <h1 className="text-lg font-extrabold tracking-wide">Evergreen Ledger</h1>
@@ -79,7 +76,7 @@ export function Sidebar() {
       <div className="p-4 border-t border-emerald-700/40">
         <a
           href="/"
-          className="w-full inline-flex items-center justify-between gap-3 px-3 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-700 shadow-md hover:from-emerald-600 hover:to-emerald-800 transform transition-all hover:-translate-y-0.5"
+          className="w-full inline-flex items-center justify-between gap-3 px-3 py-3 rounded-lg bg-gradient-to-r from-emerald-700 to-emerald-800 shadow-md hover:from-emerald-600 hover:to-emerald-800 transform transition-all hover:-translate-y-0.5"
           aria-label="Logout"
           title="Logout"
         >
@@ -89,10 +86,9 @@ export function Sidebar() {
             </span>
             <div className="text-left">
               <div className="font-medium text-white">Logout</div>
-              <div className="text-xs text-emerald-100/80">Sign out of your account</div>
             </div>
           </div>
-          <div className="text-xs text-emerald-100/90 opacity-90">Goodbye</div>
+          
         </a>
       </div>
     </aside>
