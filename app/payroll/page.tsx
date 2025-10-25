@@ -133,24 +133,53 @@ export default function PayrollPage() {
         </div>
 
         {/* Payment Calculation Section */}
-        <Card className="p-6 border border-border bg-card mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-6">Payment Calculation</h2>
-          <div className="bg-secondary/5 border border-secondary/20 rounded-lg p-4 space-y-3 sm:space-y-0 sm:flex sm:gap-3">
-            <div className="flex-1 flex justify-between items-center">
+        <Card className="p-4 sm:p-6 border border-border bg-card mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4 sm:mb-6">Payment Calculation</h2>
+          
+          {/* Mobile Layout - Stack vertically */}
+          <div className="sm:hidden bg-secondary/5 border border-secondary/20 rounded-lg p-4 space-y-3">
+            <div className="flex justify-between items-center">
               <span className="text-foreground">Formula:</span>
-              <span className="font-mono text-sm text-muted-foreground">Payment = Weight (kg) × Grade Rate (Rs/kg)</span>
+              <span className="font-mono text-xs text-muted-foreground">Payment = Weight × Rate</span>
             </div>
-            <div className="flex-1 flex justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="text-foreground">Grade A Rate:</span>
               <span className="font-semibold text-primary">Rs. 500/kg</span>
             </div>
-            <div className="flex-1 flex justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="text-foreground">Grade B Rate:</span>
               <span className="font-semibold text-secondary">Rs. 350/kg</span>
             </div>
-            <div className="flex-1 flex justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="text-foreground">Grade C Rate:</span>
               <span className="font-semibold text-muted-foreground">Rs. 200/kg</span>
+            </div>
+          </div>
+
+          {/* Desktop Layout - Better structured for larger screens */}
+          <div className="hidden sm:block bg-secondary/5 border border-secondary/20 rounded-lg p-6">
+            {/* Formula Section - Prominent display */}
+            <div className="mb-6 text-center">
+              <div className="text-sm text-muted-foreground mb-2">Formula:</div>
+              <div className="text-lg font-mono font-medium text-foreground bg-white/50 dark:bg-black/20 px-4 py-2 rounded-lg inline-block">
+                Payment = Weight (kg) × Grade Rate (Rs/kg)
+              </div>
+            </div>
+
+            {/* Grade Rates - Grid layout for better readability */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white/70 dark:bg-black/10 rounded-lg p-4 text-center border border-primary/20">
+                <div className="text-sm text-muted-foreground mb-1">Grade A Rate:</div>
+                <div className="text-xl font-bold text-primary">Rs. 500/kg</div>
+              </div>
+              <div className="bg-white/70 dark:bg-black/10 rounded-lg p-4 text-center border border-secondary/20">
+                <div className="text-sm text-muted-foreground mb-1">Grade B Rate:</div>
+                <div className="text-xl font-bold text-secondary">Rs. 350/kg</div>
+              </div>
+              <div className="bg-white/70 dark:bg-black/10 rounded-lg p-4 text-center border border-muted/20">
+                <div className="text-sm text-muted-foreground mb-1">Grade C Rate:</div>
+                <div className="text-xl font-bold text-muted-foreground">Rs. 200/kg</div>
+              </div>
             </div>
           </div>
         </Card>
