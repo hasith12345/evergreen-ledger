@@ -104,6 +104,7 @@ const BANKS = [
 export default function SuppliersPage() {
   const STORAGE_KEY = 'evergreen_suppliers_v1'
 
+  // Always start with initial suppliers on page load/refresh
   const [suppliersList, setSuppliersList] = useState(initialSuppliers)
   const { toast } = useToast()
   const [showForm, setShowForm] = useState(false)
@@ -141,30 +142,7 @@ export default function SuppliersPage() {
     })
   }
 
-  // Persist suppliers to localStorage so they survive navigation/refresh
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        if (Array.isArray(parsed) && parsed.length) {
-          setSuppliersList(parsed)
-        }
-      }
-    } catch (e) {
-      // ignore parse errors
-      console.warn('Failed to load suppliers from localStorage', e)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(suppliersList))
-    } catch (e) {
-      console.warn('Failed to save suppliers to localStorage', e)
-    }
-  }, [suppliersList])
+  // Note: localStorage persistence removed - suppliers reset on page refresh
 
   const handleEditSupplier = (e: React.FormEvent) => {
     e.preventDefault()
@@ -218,6 +196,8 @@ export default function SuppliersPage() {
     setIsEditing(false)
     setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
   }
+
+
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
