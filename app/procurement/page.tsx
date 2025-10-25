@@ -208,9 +208,9 @@ export default function ProcurementPage() {
               <div className="flex items-end gap-3">
                 <Button
                   type="submit"
-                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold"
+                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold"
                 >
-                  Recored Entry ✓
+                  Record Entry ✓
                 </Button>
               </div>
             </div>
@@ -218,8 +218,7 @@ export default function ProcurementPage() {
             <Button
               type="button"
               onClick={handleClearForm}
-              variant="outline"
-              className="w-full bg-gray-200 hover:bg-gray-300 text-foreground border-0 font-semibold"
+              className="w-full bg-muted hover:bg-primary/10 hover:text-primary text-foreground border-0 font-semibold"
             >
               Clear Form
             </Button>
@@ -280,7 +279,7 @@ export default function ProcurementPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                className="bg-gray-400 hover:bg-gray-500 text-white border-0"
+                className="flex items-center gap-2 bg-transparent text-foreground"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Prev
@@ -289,7 +288,7 @@ export default function ProcurementPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="bg-gray-400 hover:bg-gray-500 text-white border-0"
+                className="flex items-center gap-2 bg-transparent text-foreground"
               >
                 Next
                 <ChevronRight className="w-4 h-4" />
@@ -306,7 +305,7 @@ export default function ProcurementPage() {
                 <p className="text-foreground font-semibold">{supplier.name}</p>
               </Card>
             ))}
-            <Button variant="outline" className="bg-gray-400 hover:bg-gray-500 text-white border-0 font-semibold">
+            <Button variant="outline" className="flex items-center gap-2 bg-transparent text-foreground font-semibold">
               View All
             </Button>
           </div>
