@@ -4,65 +4,98 @@ import { useState } from "react"
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { MessageSquare, CheckCircle, Clock } from "lucide-react"
+import { MessageSquare, CheckCircle, Clock, Check, XIcon } from "lucide-react"
+import { useToast } from '@/hooks/use-toast'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from '@/components/ui/dialog'
 
 const paymentRecords = [
   {
     id: 1,
-    supplier: "Green Valley Farms",
-    amount: 125000,
-    weight: 250,
+    supplier: "Sanath Nishantha",
+    amount: 100000,
+    weight: 200,
     grade: "A",
     rate: 500,
     status: "Paid",
     date: "2025-01-15",
-    phone: "9876543210",
+    phone: "0714442389",
   },
   {
     id: 2,
-    supplier: "Mountain Tea Co",
-    amount: 63000,
-    weight: 180,
+    supplier: "Hashan Hewage",
+    amount: 95000,
+    weight: 271,
     grade: "B",
     rate: 350,
     status: "Pending",
     date: "2025-01-14",
-    phone: "9876543211",
+    phone: "0718890365",
   },
   {
     id: 3,
-    supplier: "Sunrise Estates",
+    supplier: "Arul Suresh",
     amount: 160000,
     weight: 320,
     grade: "A",
     rate: 500,
     status: "Pending",
     date: "2025-01-13",
-    phone: "9876543212",
+    phone: "0766742389",
   },
   {
     id: 4,
-    supplier: "Valley Harvest",
-    amount: 30000,
-    weight: 150,
-    grade: "C",
-    rate: 200,
+    supplier: "Sumana Nishanthi",
+    amount: 235400,
+    weight: 470,
+    grade: "A",
+    rate: 500,
     status: "Paid",
     date: "2025-01-12",
-    phone: "9876543213",
+    phone: "0723349512",
+  },
+  {
+    id: 5,
+    supplier: "Kusumlatha",
+    amount: 102580,
+    weight: 293,
+    grade: "B",
+    rate: 350,
+    status: "Pending",
+    date: "2025-01-11",
+    phone: "0756088993",
   },
 ]
 
 export default function PayrollPage() {
   const [payments, setPayments] = useState(paymentRecords)
   const [selectedPayment, setSelectedPayment] = useState<(typeof paymentRecords)[0] | null>(null)
+  const { toast } = useToast()
+  const [successOpen, setSuccessOpen] = useState(false)
+  const [successTitle, setSuccessTitle] = useState<string | null>(null)
+  const [successDescription, setSuccessDescription] = useState<string | null>(null)
 
   const handleMarkAsPaid = (id: number) => {
     setPayments(payments.map((p) => (p.id === id ? { ...p, status: "Paid" } : p)))
+    const paid = payments.find((p) => p.id === id)
+    if (paid) {
+      // show centered success modal instead of toast
+      setSuccessTitle('Payment transferred')
+      setSuccessDescription(`Rs. ${paid.amount.toLocaleString()} has been transferred to ${paid.supplier}.`)
+      setSuccessOpen(true)
+    }
   }
 
   const handleSendSMS = (phone: string, amount: number) => {
-    alert(`SMS sent to ${phone}: "Payment of ₹${amount.toLocaleString()} has been processed. Thank you!"`)
+    // show centered success modal instead of toast
+    setSuccessTitle('SMS sent')
+    setSuccessDescription(`SMS sent to ${phone}: Payment of Rs.${amount.toLocaleString()} has been processed.`)
+    setSuccessOpen(true)
   }
 
   const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0)
@@ -82,19 +115,19 @@ export default function PayrollPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6 border border-border bg-card">
             <p className="text-sm text-muted-foreground mb-1">Total Amount</p>
-            <p className="text-3xl font-bold text-foreground">₹{totalAmount.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-foreground">Rs. {totalAmount.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-2">{payments.length} payments</p>
           </Card>
           <Card className="p-6 border border-border bg-card">
             <p className="text-sm text-muted-foreground mb-1">Paid</p>
-            <p className="text-3xl font-bold text-primary">₹{paidAmount.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-primary">Rs. {paidAmount.toLocaleString()}</p>
             <p className="text-xs text-primary mt-2 flex items-center gap-1">
               <CheckCircle className="w-3 h-3" /> {payments.filter((p) => p.status === "Paid").length} completed
             </p>
           </Card>
           <Card className="p-6 border border-border bg-card">
             <p className="text-sm text-muted-foreground mb-1">Pending</p>
-            <p className="text-3xl font-bold text-destructive">₹{pendingAmount.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-destructive">Rs. {pendingAmount.toLocaleString()}</p>
             <p className="text-xs text-destructive mt-2 flex items-center gap-1">
               <Clock className="w-3 h-3" /> {payments.filter((p) => p.status === "Pending").length} awaiting
             </p>
@@ -107,19 +140,19 @@ export default function PayrollPage() {
           <div className="bg-secondary/5 border border-secondary/20 rounded-lg p-4 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-foreground">Formula:</span>
-              <span className="font-mono text-sm text-muted-foreground">Payment = Weight (kg) × Grade Rate (₹/kg)</span>
+              <span className="font-mono text-sm text-muted-foreground">Payment = Weight (kg) × Grade Rate (Rs/kg)</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-foreground">Grade A Rate:</span>
-              <span className="font-semibold text-primary">₹500/kg</span>
+              <span className="font-semibold text-primary">Rs. 500/kg</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-foreground">Grade B Rate:</span>
-              <span className="font-semibold text-secondary">₹350/kg</span>
+              <span className="font-semibold text-secondary">Rs. 350/kg</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-foreground">Grade C Rate:</span>
-              <span className="font-semibold text-muted-foreground">₹200/kg</span>
+              <span className="font-semibold text-muted-foreground">Rs. 200/kg</span>
             </div>
           </div>
         </Card>
@@ -157,7 +190,7 @@ export default function PayrollPage() {
                         Grade {payment.grade}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-foreground">₹{payment.amount.toLocaleString()}</td>
+                    <td className="py-3 px-4 font-semibold text-foreground">Rs. {payment.amount.toLocaleString()}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -198,6 +231,40 @@ export default function PayrollPage() {
             </table>
           </div>
         </Card>
+        {/* Centered success modal with animated tick */}
+        <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
+          <DialogContent className="max-w-md text-center">
+            {/* Animated checkmark */}
+            <div className="flex justify-center mb-4">
+              <svg className="w-20 h-20" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <circle cx="60" cy="60" r="54" stroke="#10B981" strokeWidth="4" className="opacity-10" />
+                <path d="M36 62l12 12 36-36" stroke="#10B981" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" className="checkmark" />
+              </svg>
+            </div>
+            <DialogTitle className="mb-2">{successTitle}</DialogTitle>
+            {successDescription && <DialogDescription className="mb-4">{successDescription}</DialogDescription>}
+            <div className="flex justify-center">
+              <button
+                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-white hover:opacity-95"
+                onClick={() => setSuccessOpen(false)}
+              >
+                OK
+              </button>
+            </div>
+            <DialogClose className="sr-only">Close</DialogClose>
+            {/* inline styles for checkmark animation */}
+            <style>{`
+              .checkmark {
+                stroke-dasharray: 100;
+                stroke-dashoffset: 100;
+                animation: draw 0.6s ease forwards 0.1s;
+              }
+              @keyframes draw {
+                to { stroke-dashoffset: 0; }
+              }
+            `}</style>
+          </DialogContent>
+        </Dialog>
       </div>
     </LayoutWrapper>
   )

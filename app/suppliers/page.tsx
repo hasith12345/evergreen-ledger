@@ -2,45 +2,112 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Plus, Edit2, Eye, X } from "lucide-react"
+import { Plus, Edit2, Eye, X, Trash2, Check } from "lucide-react"
+import { useToast } from '@/hooks/use-toast'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select"
 
 const initialSuppliers = [
   {
     id: 1,
-    name: "Green Valley Farms",
-    contact: "9876543210",
-    address: "123 Tea Lane, Darjeeling",
-    bank: "HDFC Bank",
-    totalCollected: "2500 kg",
-    totalPaid: "₹1,25,000",
+    name: "Sanath Nishantha",
+    contact: "0714442389",
+    address: "202/1 Ambathanna, Galle.",
+    bank: "DFCC Bank",
+    bankAccountNumber: "1234567890123456",
+    bankAccountName: "Sanath Nishantha",
+    totalCollected: "500KG",
+    totalPaid: "Rs. 100000",
   },
   {
     id: 2,
-    name: "Mountain Tea Co",
-    contact: "9876543211",
-    address: "456 Hill Road, Assam",
-    bank: "ICICI Bank",
-    totalCollected: "1800 kg",
-    totalPaid: "₹90,000",
+    name: "Hashan Hewage",
+    contact: "0718890365",
+    address: "104/1 Molpe Rd. Theldeniya, Galle.",
+    bank: "Sampath Bank",
+    bankAccountNumber: "9876543210987654",
+    bankAccountName: "Hashan Hewage",
+    totalCollected: "490KG",
+    totalPaid: "Rs. 95000",
   },
   {
     id: 3,
-    name: "Sunrise Estates",
-    contact: "9876543212",
-    address: "789 Sunrise Ave, Nilgiri",
-    bank: "SBI",
-    totalCollected: "3200 kg",
-    totalPaid: "₹1,60,000",
+    name: "Arul Suresh",
+    contact: "0766742389",
+    address: "202/4 Ambathanna, Galle.",
+    bank: "BOC Bank",
+    bankAccountNumber: "5555666677778888",
+    bankAccountName: "Arul Suresh",
+    totalCollected: "780KG",
+    totalPaid: "Rs. 160000",
+  },
+  {
+    id: 4,
+    name: "Sumana Nishanthi",
+    contact: "0723349512",
+    address: "22/2 Nittambuwa, Galle.",
+    bank: "Commercial",
+    bankAccountNumber: "1111222233334444",
+    bankAccountName: "Sumana Nishanthi",
+    totalCollected: "1100KG",
+    totalPaid: "Rs. 235400",
+  },
+  {
+    id: 5,
+    name: "Kusumlatha",
+    contact: "0756088993",
+    address: "89/2 Hatapitiya Dullawa, Galle.",
+    bank: "BOC Bank",
+    bankAccountNumber: "9999888877776666",
+    bankAccountName: "Kusumlatha",
+    totalCollected: "562KG",
+    totalPaid: "Rs. 102580",
   },
 ]
 
+const BANKS = [
+  'Amana Bank PLC',
+  'Bank of Ceylon',
+  'Bank of China Ltd (Colombo branch)',
+  'Cargills Bank PLC',
+  'Citibank N.A.',
+  'Commercial Bank of Ceylon PLC',
+  'DFCC Bank PLC',
+  'Habib Bank Ltd',
+  'Hatton National Bank PLC',
+  'National Development Bank PLC',
+  'Nations Trust Bank PLC',
+  'Pan Asia Banking Corporation PLC',
+  "People’s Bank",
+  'Sampath Bank PLC',
+  'Seylan Bank PLC',
+  'Standard Chartered Bank Sri Lanka',
+]
+
 export default function SuppliersPage() {
+  const STORAGE_KEY = 'evergreen_suppliers_v1'
+
+  // Always start with initial suppliers on page load/refresh
   const [suppliersList, setSuppliersList] = useState(initialSuppliers)
+  const { toast } = useToast()
   const [showForm, setShowForm] = useState(false)
   const [selectedSupplier, setSelectedSupplier] = useState<(typeof initialSuppliers)[0] | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -49,6 +116,8 @@ export default function SuppliersPage() {
     contact: "",
     address: "",
     bank: "",
+    bankAccountNumber: "",
+    bankAccountName: "",
   })
 
   const handleAddSupplier = (e: React.FormEvent) => {
@@ -60,17 +129,29 @@ export default function SuppliersPage() {
       totalPaid: "₹0",
     }
     setSuppliersList([...suppliersList, newSupplier])
-    setFormData({ name: "", contact: "", address: "", bank: "" })
+    setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setShowForm(false)
+    // show success toast with animated tick
+    toast({
+      title: "✅ Supplier added",
+      description: `${newSupplier.name} was successfully added.`,
+    })
   }
+
+  // Note: localStorage persistence removed - suppliers reset on page refresh
 
   const handleEditSupplier = (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedSupplier) return
     setSuppliersList(suppliersList.map((s) => (s.id === selectedSupplier.id ? { ...s, ...formData } : s)))
-    setFormData({ name: "", contact: "", address: "", bank: "" })
+    setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setSelectedSupplier(null)
     setIsEditing(false)
+    // show success toast
+    toast({
+      title: "✅ Supplier updated",
+      description: "Changes saved successfully.",
+    })
   }
 
   const openViewModal = (supplier: (typeof initialSuppliers)[0]) => {
@@ -85,15 +166,29 @@ export default function SuppliersPage() {
       contact: supplier.contact,
       address: supplier.address,
       bank: supplier.bank,
+      bankAccountNumber: supplier.bankAccountNumber,
+      bankAccountName: supplier.bankAccountName,
     })
     setIsEditing(true)
   }
 
+  // delete without confirmation (confirmation handled via dialog)
+  const handleDeleteSupplier = (id: number) => {
+    const next = suppliersList.filter((s) => s.id !== id)
+    setSuppliersList(next)
+    // close modal if it was open for this supplier
+    if (selectedSupplier?.id === id) closeModal()
+  }
+
+  const [deleteTarget, setDeleteTarget] = useState<(typeof initialSuppliers)[0] | null>(null)
+
   const closeModal = () => {
     setSelectedSupplier(null)
     setIsEditing(false)
-    setFormData({ name: "", contact: "", address: "", bank: "" })
+    setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
   }
+
+
 
   return (
     <LayoutWrapper>
@@ -117,7 +212,7 @@ export default function SuppliersPage() {
         {showForm && (
           <Card className="p-6 border border-border bg-card mb-8">
             <h2 className="text-xl font-semibold text-foreground mb-6">Register New Supplier</h2>
-            <form onSubmit={handleAddSupplier} className="space-y-4">
+            <form onSubmit={handleAddSupplier} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">Name</label>
@@ -139,7 +234,7 @@ export default function SuppliersPage() {
                     required
                   />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-foreground mb-2">Address</label>
                   <Input
                     type="text"
@@ -149,17 +244,52 @@ export default function SuppliersPage() {
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Bank Info</label>
-                  <Input
-                    type="text"
-                    placeholder="Bank name"
-                    value={formData.bank}
-                    onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                    required
-                  />
+              </div>
+
+              <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
+                    <Select
+                      value={formData.bank}
+                      onValueChange={(val) => setFormData({ ...formData, bank: val })}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select bank" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BANKS.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">Bank Account Number</label>
+                    <Input
+                      type="text"
+                      placeholder="Account number"
+                      value={formData.bankAccountNumber}
+                      onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">Bank Account Name</label>
+                    <Input
+                      type="text"
+                      placeholder="Account holder name"
+                      value={formData.bankAccountName}
+                      onChange={(e) => setFormData({ ...formData, bankAccountName: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
+
               <div className="flex gap-3">
                 <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                   Register Supplier
@@ -175,6 +305,31 @@ export default function SuppliersPage() {
             </form>
           </Card>
         )}
+
+        {/* Delete confirmation dialog */}
+        <Dialog open={Boolean(deleteTarget)} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete supplier</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete {deleteTarget?.name}? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-4 flex gap-3 justify-end">
+              <Button variant="ghost" onClick={() => setDeleteTarget(null)}>Cancel</Button>
+              <Button
+                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                onClick={() => {
+                  if (deleteTarget) handleDeleteSupplier(deleteTarget.id)
+                  setDeleteTarget(null)
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Suppliers List */}
         <div className="space-y-4">
@@ -203,6 +358,15 @@ export default function SuppliersPage() {
                   >
                     <Edit2 className="w-4 h-4" />
                     Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-2 bg-transparent text-destructive border-destructive hover:bg-destructive/10"
+                    onClick={() => setDeleteTarget(supplier)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
                   </Button>
                 </div>
               </div>
@@ -246,7 +410,7 @@ export default function SuppliersPage() {
                 </div>
 
                 {isEditing ? (
-                  <form onSubmit={handleEditSupplier} className="space-y-4">
+                  <form onSubmit={handleEditSupplier} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">Name</label>
@@ -266,7 +430,7 @@ export default function SuppliersPage() {
                           required
                         />
                       </div>
-                      <div>
+                      <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-foreground mb-2">Address</label>
                         <Input
                           type="text"
@@ -275,16 +439,50 @@ export default function SuppliersPage() {
                           required
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">Bank Info</label>
-                        <Input
-                          type="text"
-                          value={formData.bank}
-                          onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                          required
-                        />
+                    </div>
+
+                    <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
+                          <Select
+                            value={formData.bank}
+                            onValueChange={(val) => setFormData({ ...formData, bank: val })}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select bank" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {BANKS.map((b) => (
+                                <SelectItem key={b} value={b}>
+                                  {b}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-2">Bank Account Number</label>
+                          <Input
+                            type="text"
+                            value={formData.bankAccountNumber}
+                            onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-2">Bank Account Name</label>
+                          <Input
+                            type="text"
+                            value={formData.bankAccountName}
+                            onChange={(e) => setFormData({ ...formData, bankAccountName: e.target.value })}
+                            required
+                          />
+                        </div>
                       </div>
                     </div>
+
                     <div className="flex gap-3 pt-4">
                       <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                         Save Changes
@@ -305,14 +503,31 @@ export default function SuppliersPage() {
                         <p className="text-sm text-muted-foreground mb-1">Contact Number</p>
                         <p className="text-lg font-semibold text-foreground">{selectedSupplier.contact}</p>
                       </div>
-                      <div>
+                      <div className="md:col-span-2">
                         <p className="text-sm text-muted-foreground mb-1">Address</p>
                         <p className="text-lg font-semibold text-foreground">{selectedSupplier.address}</p>
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Bank Info</p>
-                        <p className="text-lg font-semibold text-foreground">{selectedSupplier.bank}</p>
+                    </div>
+
+                    <div className="border-2 border-primary/30 rounded-lg p-6 bg-primary/5">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">Bank Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Bank Name</p>
+                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bank}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Bank Account Number</p>
+                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bankAccountNumber}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Bank Account Name</p>
+                          <p className="text-lg font-semibold text-foreground">{selectedSupplier.bankAccountName}</p>
+                        </div>
                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Total Collected</p>
                         <p className="text-lg font-semibold text-primary">{selectedSupplier.totalCollected}</p>
@@ -322,6 +537,7 @@ export default function SuppliersPage() {
                         <p className="text-lg font-semibold text-foreground">{selectedSupplier.totalPaid}</p>
                       </div>
                     </div>
+
                     <div className="flex gap-3 pt-4">
                       <Button
                         onClick={() => openEditModal(selectedSupplier)}
@@ -329,6 +545,13 @@ export default function SuppliersPage() {
                       >
                         <Edit2 className="w-4 h-4" />
                         Edit Supplier
+                      </Button>
+                      <Button
+                        onClick={() => selectedSupplier && setDeleteTarget(selectedSupplier)}
+                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground flex items-center gap-2"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete Supplier
                       </Button>
                       <Button onClick={closeModal} className="bg-muted hover:bg-muted/80 text-foreground">
                         Close
