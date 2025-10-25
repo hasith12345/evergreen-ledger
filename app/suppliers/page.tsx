@@ -2,12 +2,28 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Plus, Edit2, Eye, X } from "lucide-react"
+import { Plus, Edit2, Eye, X, Trash2, Check } from "lucide-react"
+import { useToast } from '@/hooks/use-toast'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select"
 
 const initialSuppliers = [
   {
@@ -67,8 +83,30 @@ const initialSuppliers = [
   },
 ]
 
+const BANKS = [
+  'Amana Bank PLC',
+  'Bank of Ceylon',
+  'Bank of China Ltd (Colombo branch)',
+  'Cargills Bank PLC',
+  'Citibank N.A.',
+  'Commercial Bank of Ceylon PLC',
+  'DFCC Bank PLC',
+  'Habib Bank Ltd',
+  'Hatton National Bank PLC',
+  'National Development Bank PLC',
+  'Nations Trust Bank PLC',
+  'Pan Asia Banking Corporation PLC',
+  "People’s Bank",
+  'Sampath Bank PLC',
+  'Seylan Bank PLC',
+  'Standard Chartered Bank Sri Lanka',
+]
+
 export default function SuppliersPage() {
+  const STORAGE_KEY = 'evergreen_suppliers_v1'
+
   const [suppliersList, setSuppliersList] = useState(initialSuppliers)
+  const { toast } = useToast()
   const [showForm, setShowForm] = useState(false)
   const [selectedSupplier, setSelectedSupplier] = useState<(typeof initialSuppliers)[0] | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -92,7 +130,42 @@ export default function SuppliersPage() {
     setSuppliersList([...suppliersList, newSupplier])
     setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setShowForm(false)
+    // show success toast with animated tick
+    toast({
+      title: (
+        <div className="flex items-center gap-2">
+          <Check className="w-5 h-5 text-green-500 animate-pulse" />
+          <span>Supplier added</span>
+        </div>
+      ),
+      description: `${newSupplier.name} was successfully added.`,
+    })
   }
+
+  // Persist suppliers to localStorage so they survive navigation/refresh
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed) && parsed.length) {
+          setSuppliersList(parsed)
+        }
+      }
+    } catch (e) {
+      // ignore parse errors
+      console.warn('Failed to load suppliers from localStorage', e)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(suppliersList))
+    } catch (e) {
+      console.warn('Failed to save suppliers to localStorage', e)
+    }
+  }, [suppliersList])
 
   const handleEditSupplier = (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,6 +174,16 @@ export default function SuppliersPage() {
     setFormData({ name: "", contact: "", address: "", bank: "", bankAccountNumber: "", bankAccountName: "" })
     setSelectedSupplier(null)
     setIsEditing(false)
+    // show success toast
+    toast({
+      title: (
+        <div className="flex items-center gap-2">
+          <Check className="w-5 h-5 text-green-500 animate-pulse" />
+          <span>Supplier updated</span>
+        </div>
+      ),
+      description: `Changes saved successfully.`,
+    })
   }
 
   const openViewModal = (supplier: (typeof initialSuppliers)[0]) => {
@@ -120,6 +203,16 @@ export default function SuppliersPage() {
     })
     setIsEditing(true)
   }
+
+  // delete without confirmation (confirmation handled via dialog)
+  const handleDeleteSupplier = (id: number) => {
+    const next = suppliersList.filter((s) => s.id !== id)
+    setSuppliersList(next)
+    // close modal if it was open for this supplier
+    if (selectedSupplier?.id === id) closeModal()
+  }
+
+  const [deleteTarget, setDeleteTarget] = useState<(typeof initialSuppliers)[0] | null>(null)
 
   const closeModal = () => {
     setSelectedSupplier(null)
@@ -188,13 +281,22 @@ export default function SuppliersPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
-                    <Input
-                      type="text"
-                      placeholder="Bank name"
+                    <Select
                       value={formData.bank}
-                      onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                      required
-                    />
+                      onValueChange={(val) => setFormData({ ...formData, bank: val })}
+                      className="w-full"
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select bank" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BANKS.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">Bank Account Number</label>
@@ -235,6 +337,31 @@ export default function SuppliersPage() {
           </Card>
         )}
 
+        {/* Delete confirmation dialog */}
+        <Dialog open={Boolean(deleteTarget)} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete supplier</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete {deleteTarget?.name}? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-4 flex gap-3 justify-end">
+              <Button variant="ghost" onClick={() => setDeleteTarget(null)}>Cancel</Button>
+              <Button
+                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                onClick={() => {
+                  if (deleteTarget) handleDeleteSupplier(deleteTarget.id)
+                  setDeleteTarget(null)
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Suppliers List */}
         <div className="space-y-4">
           {suppliersList.map((supplier) => (
@@ -262,6 +389,15 @@ export default function SuppliersPage() {
                   >
                     <Edit2 className="w-4 h-4" />
                     Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-2 bg-transparent text-destructive border-destructive hover:bg-destructive/10"
+                    onClick={() => setDeleteTarget(supplier)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
                   </Button>
                 </div>
               </div>
@@ -341,12 +477,22 @@ export default function SuppliersPage() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-2">Bank Name</label>
-                          <Input
-                            type="text"
+                          <Select
                             value={formData.bank}
-                            onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                            required
-                          />
+                            onValueChange={(val) => setFormData({ ...formData, bank: val })}
+                            className="w-full"
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select bank" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {BANKS.map((b) => (
+                                <SelectItem key={b} value={b}>
+                                  {b}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-2">Bank Account Number</label>
@@ -431,6 +577,13 @@ export default function SuppliersPage() {
                       >
                         <Edit2 className="w-4 h-4" />
                         Edit Supplier
+                      </Button>
+                      <Button
+                        onClick={() => selectedSupplier && setDeleteTarget(selectedSupplier)}
+                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground flex items-center gap-2"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete Supplier
                       </Button>
                       <Button onClick={closeModal} className="bg-muted hover:bg-muted/80 text-foreground">
                         Close
