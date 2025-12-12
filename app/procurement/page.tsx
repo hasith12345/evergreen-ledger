@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useState } from "react"
-import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -127,14 +126,13 @@ export default function ProcurementPage() {
   const paginatedCollections = filteredCollections.slice(startIndex, endIndex)
 
   return (
-    <LayoutWrapper>
-      <div className="p-8">
+    <div className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Green Leaf Procurement</h1>
           <p className="text-muted-foreground">Digital Intake and Grading Interface.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
           {/* Card - Today's Collection */}
           <Card className="p-6 border border-border bg-card hover:shadow-lg transition-shadow rounded-lg">
             <div className="flex items-start justify-between">
@@ -205,7 +203,7 @@ export default function ProcurementPage() {
         <Card className="p-8 border border-border bg-card mb-8">
           <h2 className="text-lg font-bold text-foreground mb-6">NEW COLLECTION ENTRY</h2>
           <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
               {/* Supplier Selection */}
               <div>
                 <label className="block text-xs font-semibold text-foreground mb-3">
@@ -264,7 +262,7 @@ export default function ProcurementPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
               {/* Quality Grade */}
               <div>
                 <label className="block text-xs font-semibold text-foreground mb-3">
@@ -291,10 +289,10 @@ export default function ProcurementPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-end gap-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
                 <Button
                   type="submit"
-                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold"
+                  className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold"
                 >
                   Record Entry ✓
                 </Button>
@@ -312,11 +310,11 @@ export default function ProcurementPage() {
         </Card>
 
         <Card className="p-8 border border-border bg-card">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
             <h2 className="text-lg font-bold text-foreground">RECENT COLLECTIONS</h2>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
                 {/* Search with clear button */}
-                <div className="relative w-64">
+                <div className="relative w-full sm:w-64">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     type="text"
@@ -324,7 +322,7 @@ export default function ProcurementPage() {
                     onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }}
                     placeholder="Search by supplier"
                     aria-label="Search recent collections"
-                    className="pl-10 pr-10 bg-muted border-0 text-sm shadow-sm rounded-lg"
+                    className="pl-10 pr-10 bg-muted border-0 text-sm shadow-sm rounded-lg w-full"
                   />
                   {searchTerm && (
                     <button
@@ -360,7 +358,26 @@ export default function ProcurementPage() {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto mb-6 rounded-md shadow-sm">
+          {/* Mobile list for recent collections (improved responsiveness) */}
+          <div className="sm:hidden space-y-3 mb-6">
+            {paginatedCollections.map((collection) => (
+              <Card key={collection.id} className="w-full p-4 border border-border bg-card">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-foreground truncate">{collection.supplier}</div>
+                    <div className="text-xs text-muted-foreground">{collection.time} • {collection.grade}</div>
+                    <div className="mt-2 text-sm">Gross: {collection.grossWeight}kg • Net: {collection.netWeight}kg</div>
+                  </div>
+
+                  <div className="flex-shrink-0 flex items-center gap-2">
+                    <Button size="sm" variant="outline" className="text-xs">View</Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div className="overflow-x-auto mb-6 rounded-md shadow-sm hidden sm:block">
             <table className="min-w-full text-sm divide-y divide-border">
               <thead>
                 <tr className="">
@@ -414,7 +431,7 @@ export default function ProcurementPage() {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div className="text-sm text-muted-foreground">Showing {startIndex + 1} - {endIndex} of {totalItems} entries</div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 overflow-x-auto">
               <div className="hidden sm:flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Rows:</span>
                 <select
@@ -428,7 +445,7 @@ export default function ProcurementPage() {
                 </select>
               </div>
 
-              <nav className="flex items-center gap-2" aria-label="Pagination">
+              <nav className="flex items-center gap-2 whitespace-nowrap" aria-label="Pagination">
                 <Button
                   size="sm"
                   variant="outline"
@@ -527,6 +544,5 @@ export default function ProcurementPage() {
           </div>
         </div>
       </div>
-    </LayoutWrapper>
   )
 }

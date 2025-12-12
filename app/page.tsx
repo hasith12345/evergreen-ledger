@@ -62,7 +62,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative"
+      className="min-h-screen flex items-center justify-center px-4 py-6 sm:px-6 lg:px-8 relative"
       style={{
         backgroundImage: "url('/background.jpg')",
         backgroundSize: 'cover',
@@ -73,26 +73,26 @@ export default function LoginPage() {
       {/* Background overlay */}
       <div className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-md sm:max-w-lg relative z-10">
         {/* Logo Section */}
-        <div className="text-center mb-6">
-          <div className="flex justify-center mb-3">
-            <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden shadow-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
               <img
                 src="/logo.png"
                 alt="EvergreenLedger Logo"
-                className="w-16 h-16 object-contain"
+                className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-contain"
                 style={{ imageRendering: 'crisp-edges' }}
               />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-green-200 mb-1">EvergreenLedger</h1>
-          <p className="text-sm text-white/80">Tea Leaf Supplier Management System</p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-green-200 mb-1">EvergreenLedger</h1>
+          <p className="text-xs sm:text-sm text-white/80">Tea Leaf Supplier Management System</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-card/95 backdrop-blur-md rounded-xl shadow-lg p-7 border border-border/50">
-          <form onSubmit={handleLogin} className="space-y-4">
+        <div className="bg-card/95 backdrop-blur-md rounded-xl shadow-lg p-6 sm:p-7 lg:p-8 border border-border/50">
+          <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-foreground mb-2">
                 Username
@@ -103,7 +103,7 @@ export default function LoginPage() {
                 placeholder="Enter your username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full"
+                className="w-full h-10 sm:h-11 text-base"
                 aria-label="username"
                 autoComplete="username"
                 required
@@ -121,7 +121,7 @@ export default function LoginPage() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pr-10"
+                  className="w-full h-10 sm:h-11 text-base pr-12"
                   aria-label="password"
                   autoComplete="current-password"
                   required
@@ -129,45 +129,49 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary touch-manipulation"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Checkbox
                   id="remember"
                   checked={remember}
                   onCheckedChange={(v) => setRemember(Boolean(v))}
                 />
-                <label htmlFor="remember" className="text-sm select-none">Remember me</label>
+                <label htmlFor="remember" className="text-sm select-none cursor-pointer">Remember me</label>
               </div>
 
-              <button className="text-sm text-primary hover:underline" type="button" onClick={handleDemo}>
+              <button 
+                className="text-sm text-primary hover:underline self-start sm:self-auto touch-manipulation" 
+                type="button" 
+                onClick={handleDemo}
+              >
                 Use demo credentials
               </button>
             </div>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">{error}</p>}
 
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2"
+              className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-base touch-manipulation"
               aria-disabled={isLoading}
             >
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
 
-          <div className="mt-4 text-center">
+          <div className="mt-4 sm:mt-6 text-center">
             <Dialog>
               <DialogTrigger asChild>
-                <button className="text-sm text-primary hover:underline" type="button">
+                <button className="text-sm text-primary hover:underline touch-manipulation" type="button">
                   Forgot Password?
                 </button>
               </DialogTrigger>
@@ -215,7 +219,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground mt-6">© 2025 EvergreenLedger. All rights reserved.</p>
+        <p className="text-center text-xs sm:text-sm text-white/60 mt-6 sm:mt-8">© 2025 EvergreenLedger. All rights reserved.</p>
       </div>
     </div>
   )

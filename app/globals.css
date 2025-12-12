@@ -122,5 +122,36 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Improve mobile experience */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Ensure proper touch target sizes on mobile */
+  @media (max-width: 1024px) {
+    button, a, input, select, textarea {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+  
+  /* Prevent zoom on input focus in iOS Safari */
+  @media screen and (max-width: 1024px) {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="number"],
+    input[type="tel"],
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+  
+  /* Extra small screens - better spacing */
+  @media (max-width: 475px) {
+    .xs\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 }

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MessageSquare, CheckCircle, Clock, Check, XIcon } from "lucide-react"
@@ -103,16 +102,15 @@ export default function PayrollPage() {
   const pendingAmount = payments.filter((p) => p.status === "Pending").reduce((sum, p) => sum + p.amount, 0)
 
   return (
-    <LayoutWrapper>
-      <div className="p-8">
+    <div className="p-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Payroll Management</h1>
           <p className="text-muted-foreground">Manage supplier payments and notifications</p>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  {/* Summary Cards */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6 border border-border bg-card">
             <p className="text-sm text-muted-foreground mb-1">Total Amount</p>
             <p className="text-3xl font-bold text-foreground">Rs. {totalAmount.toLocaleString()}</p>
@@ -135,12 +133,14 @@ export default function PayrollPage() {
         </div>
 
         {/* Payment Calculation Section */}
-        <Card className="p-6 border border-border bg-card mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-6">Payment Calculation</h2>
-          <div className="bg-secondary/5 border border-secondary/20 rounded-lg p-4 space-y-3">
+        <Card className="p-4 sm:p-6 border border-border bg-card mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4 sm:mb-6">Payment Calculation</h2>
+          
+          {/* Mobile Layout - Stack vertically */}
+          <div className="sm:hidden bg-secondary/5 border border-secondary/20 rounded-lg p-4 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-foreground">Formula:</span>
-              <span className="font-mono text-sm text-muted-foreground">Payment = Weight (kg) × Grade Rate (Rs/kg)</span>
+              <span className="font-mono text-xs text-muted-foreground">Payment = Weight × Rate</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-foreground">Grade A Rate:</span>
@@ -155,12 +155,64 @@ export default function PayrollPage() {
               <span className="font-semibold text-muted-foreground">Rs. 200/kg</span>
             </div>
           </div>
+
+          {/* Desktop Layout - Better structured for larger screens */}
+          <div className="hidden sm:block bg-secondary/5 border border-secondary/20 rounded-lg p-6">
+            {/* Formula Section - Prominent display */}
+            <div className="mb-6 text-center">
+              <div className="text-sm text-muted-foreground mb-2">Formula:</div>
+              <div className="text-lg font-mono font-medium text-foreground bg-white/50 dark:bg-black/20 px-4 py-2 rounded-lg inline-block">
+                Payment = Weight (kg) × Grade Rate (Rs/kg)
+              </div>
+            </div>
+
+            {/* Grade Rates - Grid layout for better readability */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white/70 dark:bg-black/10 rounded-lg p-4 text-center border border-primary/20">
+                <div className="text-sm text-muted-foreground mb-1">Grade A Rate:</div>
+                <div className="text-xl font-bold text-primary">Rs. 500/kg</div>
+              </div>
+              <div className="bg-white/70 dark:bg-black/10 rounded-lg p-4 text-center border border-secondary/20">
+                <div className="text-sm text-muted-foreground mb-1">Grade B Rate:</div>
+                <div className="text-xl font-bold text-secondary">Rs. 350/kg</div>
+              </div>
+              <div className="bg-white/70 dark:bg-black/10 rounded-lg p-4 text-center border border-muted/20">
+                <div className="text-sm text-muted-foreground mb-1">Grade C Rate:</div>
+                <div className="text-xl font-bold text-muted-foreground">Rs. 200/kg</div>
+              </div>
+            </div>
+          </div>
         </Card>
 
         {/* Payments Table */}
         <Card className="p-6 border border-border bg-card">
           <h2 className="text-lg font-semibold text-foreground mb-6">Payment Records</h2>
-          <div className="overflow-x-auto">
+          {/* Mobile list view */}
+          <div className="sm:hidden space-y-3">
+            {payments.map((payment) => (
+              <Card key={payment.id} className="p-4 border border-border bg-card">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="font-medium text-foreground">{payment.supplier}</div>
+                    <div className="text-xs text-muted-foreground">{payment.date} • {payment.weight}kg • Grade {payment.grade}</div>
+                    <div className="mt-2 font-semibold">Rs. {payment.amount.toLocaleString()}</div>
+                  </div>
+                  <div className="ml-4 flex flex-col gap-2">
+                    {payment.status === "Pending" && (
+                      <Button size="sm" variant="outline" onClick={() => handleMarkAsPaid(payment.id)} className="text-xs">
+                        Mark Paid
+                      </Button>
+                    )}
+                    <Button size="sm" variant="outline" onClick={() => handleSendSMS(payment.phone, payment.amount)} className="flex items-center gap-1 text-xs">
+                      <MessageSquare className="w-3 h-3" /> SMS
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div className="overflow-x-auto hidden sm:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
@@ -266,6 +318,5 @@ export default function PayrollPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </LayoutWrapper>
   )
 }
