@@ -130,7 +130,7 @@ export default function ProcurementPage() {
     <LayoutWrapper>
       <div className="p-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Green Leaf Procurement</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Green Leaf Procurement</h1>
           <p className="text-muted-foreground">Digital Intake and Grading Interface.</p>
         </div>
 
